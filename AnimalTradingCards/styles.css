@@ -1,0 +1,30 @@
+/* add your CSS here */
+body {
+  width: 300px;
+}
+
+img {
+  width: 300px;
+}
+
+span {
+  font-weight: bold;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0px;
+}
+
+.content {
+  border: solid 3px gray;
+}
+
+.information {
+  border: solid 3px gray;
+  width: 300px;
+}
+
+.interesting-fact {
+  font-style: italic;
+}
