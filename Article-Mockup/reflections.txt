@@ -1,0 +1,20 @@
+You've learned a lot about web development so far. I want you to take a moment to write down your thoughts about web development here. Answer the following questions:
+  * What new skills have you learned?
+  * What has been easy?
+  * What has been difficult?
+  * How have you used the problem solving strategies from the first project to overcome challenges so far?
+
+---
+
+* What new skills have you learnt?
+I have learnt how to format text in HTML and include images and combine those skills to create a nice looking article. Additionally I learnt to be able to research external sources such as the MDN to find solutions to my problems at hand.
+
+* What has been easy?
+The index.html that was offered as a template has made it a lot easier for me to fulfill the task. It was basically just me adding in a bunch of tags and attributes wherever required. I thought that making sure that all tags are properly nested could pose a challenge, but apparently not. Maybe with more complicated HTML trees.
+
+* What has been difficult?
+Not difficult, but the one thing where I had to spend a minute or two was getting the superscript right. I initially thought I had to come up with some kind of cite (or blockquote or q tag for this), only to find out these don’t render to anything special in any browsers. Anyway then I remembered the tip to look into the <sup> tag in the Mozilla Developer Resources. Another difficulty was verifying that my created index.html file renders to precisely the same as can be seen in the mockup pdf.
+
+* How have you used the problem solving strategies from the first project to overcome challenges so far?
+Trying to stay focused and not trying to come up with dozens of possible solutions at the same time.
+As well as using the internet/Google to look into solutions for tasks where I cannot come up with a solution otherwise.
