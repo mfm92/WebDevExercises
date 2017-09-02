@@ -1,10 +1,11 @@
 /* add your CSS here */
 body {
-  width: 300px;
+  width: 332px;
 }
 
 img {
   width: 300px;
+  padding-bottom: 10px;
 }
 
 span {
@@ -17,12 +18,13 @@ ul {
 }
 
 .content {
-  border: solid 3px gray;
+  border: solid 1px gray;
+  padding: 0px 15px 15px 15px;
 }
 
 .information {
-  border: solid 3px gray;
-  width: 300px;
+  border: solid 1px gray;
+  padding: 0px 10px 0px 10px;
 }
 
 .interesting-fact {
