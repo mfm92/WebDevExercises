@@ -21,14 +21,14 @@ ul {
 }
 
 .content {
-  border: solid 1px rgb(200, 200, 200);
+  border: solid 1px #cecece;
   /* it appears to me as if the browser adds some padding at the top by default? (tested in chrome) */
   padding: 0px 15px 15px 15px;
   width: 300px;
 }
 
 .information {
-  border: solid 1px rgb(200, 200, 200);
+  border: solid 1px #cecece;
   border-radius: 4px;
   margin-top: 15px;
   padding-left: 15px;
