@@ -1,11 +1,12 @@
-/* add your CSS here */
 body {
-  width: 332px;
+  /* Width of .content: 300px + padding-left (15px) + padding-right (15px)
+  + border at left and right (1px each) + padding-left/right (15px each)
+  of the element with a class attribute value of "information" */
+  width: 354px;
 }
 
 img {
   width: 300px;
-  padding-bottom: 10px;
 }
 
 span {
@@ -13,18 +14,25 @@ span {
 }
 
 ul {
+  /*remove dots*/
   list-style-type: none;
+  /*remove unnecessary indenting*/
   padding: 0px;
 }
 
 .content {
-  border: solid 1px gray;
+  border: solid 1px rgb(200, 200, 200);
+  /* it appears to me as if the browser adds some padding at the top by default? (tested in chrome) */
   padding: 0px 15px 15px 15px;
+  width: 300px;
 }
 
 .information {
-  border: solid 1px gray;
-  padding: 0px 10px 0px 10px;
+  border: solid 1px rgb(200, 200, 200);
+  border-radius: 4px;
+  margin-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .interesting-fact {
