@@ -2,7 +2,7 @@ body {
   /* Width of .content: 300px + padding-left (15px) + padding-right (15px)
   + border at left and right (1px each) + padding-left/right (15px each)
   of the element with a class attribute value of "information" */
-  width: 354px;
+  width: 352px;
 }
 
 img {
