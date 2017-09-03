@@ -22,7 +22,8 @@ ul {
 
 .content {
   border: solid 1px #cecece;
-  /* it appears to me as if the browser adds some padding at the top by default? (tested in chrome) */
+  /* it appears to me as if the browser adds some padding at the top by default?
+    (tested in chrome) */
   padding: 0px 15px 15px 15px;
   width: 300px;
 }
