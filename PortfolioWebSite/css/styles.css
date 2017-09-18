@@ -1,69 +1,57 @@
 body {
-  font-family: "Montserrat", "PT Sans", "Helvetica";
+    font-family: "Montserrat", "PT Sans", "Helvetica";
 }
-
 figure {
-  text-align: center;
+    text-align: center;
 }
-
 h2 {
-  background-color: #efefef;
-  border: 2px dotted #d8d8d8;
-  border-radius: 5px;
-  margin: 15px;
-  padding: 15px;
-  text-align: center;
+    background-color: #efefef;
+    border: 2px dotted #d8d8d8;
+    border-radius: 5px;
+    margin: 15px;
+    padding: 15px;
+    text-align: center;
 }
-
 img {
-  text-align: center;
+    text-align: center;
 }
-
 footer {
-  background-color: #24855B;
-  color: white;
-  padding: 50px;
-  text-align: center;
+    background-color: #24855B;
+    color: white;
+    padding: 50px;
+    text-align: center;
 }
-
 div.thumbnails img {
-  width: 100%;
+    width: 100%;
 }
-
 .fa {
-  color: white;
-  font-size: 40px;
-  width: 15%;
+    color: white;
+    font-size: 40px;
+    width: 15%;
 }
-
 .fa:focus {
-  color: #97DEB4;
-  text-decoration: none;
+    color: #97DEB4;
+    text-decoration: none;
 }
-
 .fa:hover {
-  color: #38CD8C;
-  text-decoration: none;
+    color: #38CD8C;
+    text-decoration: none;
 }
-
 .float-right {
-  text-align: right;
+    text-align: right;
 }
-
 .page-header {
-  margin: 0;
-  padding: 0;
-  text-align: right;
+    margin: 0;
+    padding: 0;
+    text-align: right;
 }
-
 @media screen and (max-width: 576px) {
-  .fa {
-    width: 35%;
-  }
+    .fa {
+        width: 35%;
+    }
 }
-
 @media screen and (max-width: 950px) {
-  .fa {
-    width: 20%;
-  }
+    .fa {
+        width: 20%;
+    }
 }
