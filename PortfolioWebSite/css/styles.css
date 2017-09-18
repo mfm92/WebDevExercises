@@ -36,6 +36,11 @@ div.thumbnails img {
   width: 15%;
 }
 
+.fa:focus {
+  color: #97DEB4;
+  text-decoration: none;
+}
+
 .fa:hover {
   color: #38CD8C;
   text-decoration: none;
