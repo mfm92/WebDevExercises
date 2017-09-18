@@ -1,13 +1,39 @@
-figcaption {
+body {
+  font-family: "Montserrat", "PT Sans", "Helvetica"
+}
+
+figure {
   text-align: center;
+}
+
+h2 {
+  background-color: #efefef;
+  border: 2px dotted #d8d8d8;
+  border-radius: 5px;
+  margin: 15px;
+  padding: 15px;
+  text-align: center;
+}
+
+img {
+  text-align: center;
+}
+
+footer {
+  background-color: #24855B;
+  padding: 50px;
+}
+
+div.thumbnails img {
+  width: 100%;
+}
+
+.float-right {
+  text-align: right;
 }
 
 .page-header {
   margin: 0;
   padding: 0;
-  text-align: center;
-}
-
-.thumbnails {
-  margin-top: 3%;
+  text-align: right;
 }
