@@ -1,5 +1,5 @@
 body {
-  font-family: "Montserrat", "PT Sans", "Helvetica"
+  font-family: "Montserrat", "PT Sans", "Helvetica";
 }
 
 figure {
@@ -21,11 +21,24 @@ img {
 
 footer {
   background-color: #24855B;
+  color: white;
   padding: 50px;
+  text-align: center;
 }
 
 div.thumbnails img {
   width: 100%;
+}
+
+.fa {
+  color: white;
+  font-size: 40px;
+  width: 15%;
+}
+
+.fa:hover {
+  color: #38CD8C;
+  text-decoration: none;
 }
 
 .float-right {
@@ -36,4 +49,16 @@ div.thumbnails img {
   margin: 0;
   padding: 0;
   text-align: right;
+}
+
+@media screen and (max-width: 576px) {
+  .fa {
+    width: 35%;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .fa {
+    width: 20%;
+  }
 }
