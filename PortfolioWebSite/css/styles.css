@@ -41,6 +41,10 @@ div.thumbnails img {
 .float-right {
     text-align: right;
 }
+#logoImg {
+    max-width: 120px;
+    max.height: 120px;
+}
 .page-header {
     margin: 0;
     padding: 0;
@@ -50,9 +54,17 @@ div.thumbnails img {
     .fa {
         width: 35%;
     }
+    #logoImg {
+      max-width: 70px;
+      max.height: 70px;
+    }
 }
 @media screen and (max-width: 950px) {
     .fa {
         width: 20%;
+    }
+    #logoImg {
+      max-width: 100px;
+      max.height: 100px;
     }
 }
