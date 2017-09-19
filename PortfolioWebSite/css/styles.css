@@ -1,6 +1,23 @@
+/* general */
 body {
     font-family: "Montserrat", "PT Sans", "Helvetica";
 }
+img {
+    text-align: center;
+}
+
+/* header */
+.logo-image {
+    max-width: 120px;
+    max-height: 120px;
+}
+.page-header {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+}
+
+/* main section */
 figure {
     margin-top: 5%;
     text-align: center;
@@ -13,17 +30,18 @@ h2 {
     padding: 15px;
     text-align: center;
 }
-img {
-    text-align: center;
+
+/* aside bar */
+aside h3 {
+  text-align: right;
 }
+
+/* footer */
 footer {
-    background-color: #24855B;
+    background-color: #24855b;
     color: white;
     padding: 50px;
     text-align: center;
-}
-div.thumbnails img {
-    width: 100%;
 }
 .fa {
     color: white;
@@ -31,30 +49,20 @@ div.thumbnails img {
     width: 15%;
 }
 .fa:focus {
-    color: #97DEB4;
+    color: #97deb4;
     text-decoration: none;
 }
 .fa:hover {
-    color: #38CD8C;
+    color: #38cd8c;
     text-decoration: none;
 }
-.float-right {
-    text-align: right;
-}
-#logoImg {
-    max-width: 120px;
-    max-height: 120px;
-}
-.page-header {
-    margin: 0;
-    padding: 0;
-    text-align: right;
-}
+
+/* depending on viewport width */
 @media screen and (max-width: 576px) {
     .fa {
         margin: 3%;
     }
-    #logoImg {
+    .logo-image {
       max-width: 70px;
       max-height: 70px;
     }
@@ -63,7 +71,7 @@ div.thumbnails img {
     .fa {
         width: 20%;
     }
-    #logoImg {
+    .logo-image {
       max-width: 100px;
       max-height: 100px;
     }
