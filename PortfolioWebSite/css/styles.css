@@ -52,7 +52,7 @@ div.thumbnails img {
 }
 @media screen and (max-width: 576px) {
     .fa {
-        width: 35%;
+        margin: 3%;
     }
     #logoImg {
       max-width: 70px;
