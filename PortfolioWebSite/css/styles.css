@@ -2,6 +2,7 @@
 body {
     font-family: "Montserrat", "PT Sans", "Helvetica";
 }
+
 img {
     text-align: center;
 }
@@ -11,6 +12,7 @@ img {
     max-width: 90px;
     max-height: 90px;
 }
+
 .page-header {
     margin: 0;
     padding: 0;
@@ -22,6 +24,7 @@ figure {
     margin-top: 5%;
     text-align: center;
 }
+
 h2 {
     background-color: #efefef;
     border: 2px dotted #d8d8d8;
@@ -43,15 +46,18 @@ footer {
     padding: 50px;
     text-align: center;
 }
+
 .fa {
     color: white;
     font-size: 40px;
     width: 15%;
 }
+
 .fa:focus {
     color: #97deb4;
     text-decoration: none;
 }
+
 .fa:hover {
     color: #38cd8c;
     text-decoration: none;
@@ -67,6 +73,7 @@ footer {
       max-height: 70px;
     }
 }
+
 @media screen and (max-width: 950px) {
     .fa {
         width: 20%;
