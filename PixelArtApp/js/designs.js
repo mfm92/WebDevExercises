@@ -1,7 +1,3 @@
-// Select color input
-// Select size input
-
-// When size is submitted by the user, call makeGrid()
 var submitButton = $("input[type='submit']");
 var pixelCanvas = $('#pixel_canvas');
 var inputHeight = $('#input_height');
@@ -9,7 +5,6 @@ var inputWidth = $('#input_width');
 
 var makeGrid = function(evt) {
   evt.preventDefault();
-  discardGrid();
 
   const inputHeightVal = inputHeight.val();
   const inputWidthVal = inputWidth.val();
@@ -25,6 +20,16 @@ var makeGrid = function(evt) {
   }
 };
 
+var colorTheCell = function(evt) {
+  const clickedCell = $(evt.target);
+  const colourPicker = $('#colorPicker');
+  const selectedColour = colourPicker.val();
+  clickedCell.css('background-color', selectedColour);
+};
+
 $(function() {
+  inputWidth.val(20);
+  inputHeight.val(20);
   submitButton.click(makeGrid);
+  pixelCanvas.click('td', colorTheCell);
 });
