@@ -3,8 +3,13 @@ var pixelCanvas = $('#pixel_canvas');
 var inputHeight = $('#input_height');
 var inputWidth = $('#input_width');
 
+var discardGrid = function() {
+  pixelCanvas.empty();
+}
+
 var makeGrid = function(evt) {
   evt.preventDefault();
+  discardGrid();
 
   const inputHeightVal = inputHeight.val();
   const inputWidthVal = inputWidth.val();
