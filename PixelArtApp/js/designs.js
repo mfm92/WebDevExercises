@@ -42,6 +42,10 @@ var makeGrid = function(evt) {
 */
 var colorTheCell = function(evt) {
   const clickedCell = $(evt.target);
+
+  if (!clickedCell.is('td')) {
+    return;
+  }
   const colourPicker = $('#colorPicker');
   const selectedColour = colourPicker.val();
   clickedCell.css('background-color', selectedColour);
