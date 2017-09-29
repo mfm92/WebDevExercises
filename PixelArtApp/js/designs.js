@@ -1,7 +1,7 @@
-var submitButton = $("input[type='submit']");
-var pixelCanvas = $('#pixel_canvas');
-var inputHeight = $('#input_height');
-var inputWidth = $('#input_width');
+var submitButton = $("input[type=\"submit\"]");
+var pixelCanvas = $("#pixel_canvas");
+var inputHeight = $("#input_height");
+var inputWidth = $("#input_width");
 
 /**
 * @description Discards the grid by removing the entire subtree
@@ -9,7 +9,7 @@ var inputWidth = $('#input_width');
 */
 var discardGrid = function() {
   pixelCanvas.empty();
-}
+};
 
 /**
 * @description Creates a grid of arbitrary dimensions
@@ -24,11 +24,11 @@ var makeGrid = function(evt) {
   const inputWidthVal = inputWidth.val();
 
   for (let i = 0; i < inputWidthVal; i++) {
-    const tableRowElement = $('<tr/>');
+    const tableRowElement = $("<tr/>");
     pixelCanvas.append(tableRowElement);
 
     for (let j = 0; j < inputHeightVal; j++) {
-      const tableCell = $('<td/>');
+      const tableCell = $("<td/>");
       tableRowElement.append(tableCell);
     }
   }
@@ -43,12 +43,12 @@ var makeGrid = function(evt) {
 var colorTheCell = function(evt) {
   const clickedCell = $(evt.target);
 
-  if (!clickedCell.is('td')) {
+  if (!clickedCell.is("td")) {
     return;
   }
-  const colourPicker = $('#colorPicker');
+  const colourPicker = $("#colorPicker");
   const selectedColour = colourPicker.val();
-  clickedCell.css('background-color', selectedColour);
+  clickedCell.css("background-color", selectedColour);
 };
 
 $(function() {
@@ -59,5 +59,5 @@ $(function() {
 
   /* apply callbacks */
   submitButton.click(makeGrid);
-  pixelCanvas.click('td', colorTheCell);
+  pixelCanvas.click("td", colorTheCell);
 });
