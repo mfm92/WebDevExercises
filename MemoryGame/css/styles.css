@@ -1,0 +1,32 @@
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+header {
+  flex: 0 0 100%;
+  text-align: center;
+  background-color: blue;
+  color: green;
+}
+
+.mainGrid {
+  flex: 0 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mainGrid > div {
+  text-align: center;
+  background-color: yellow;
+  flex: 1 1 20%;
+  margin: 5px;
+  height: 100px;
+}
+
+.card4 {
+  background-image: url('../img/img4.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
