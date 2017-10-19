@@ -24,8 +24,57 @@ header {
   height: 100px;
 }
 
+.card1 {
+  background-image: url('../img/img1.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card2 {
+  background-image: url('../img/img2.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card3 {
+  background-image: url('../img/img3.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 .card4 {
   background-image: url('../img/img4.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card5 {
+  background-image: url('../img/img5.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card6 {
+  background-image: url('../img/img6.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card7 {
+  background-image: url('../img/img7.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.card8 {
+  background-image: url('../img/img8.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
