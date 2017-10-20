@@ -1,6 +1,7 @@
 var secondTryImpending = false;
 var totalAttempts = 0;
 var imageOrdering = [];
+var locked = false;
 
 Array.prototype.shuffle = function() {
   for (var i = 0; i < this.length; i++) {
@@ -53,8 +54,9 @@ var setUpEvtListeners = function() {
       let card = imageOrdering[id];
       console.log('Flipped: ' + card.flipped);
       console.log('Success: ' + card.success);
+      console.log('Locked: ' + locked);
 
-      if (card.flipped || card.success) {
+      if (card.flipped || card.success || locked) {
         return;
       }
       console.log('ID: ' + id);
@@ -106,6 +108,7 @@ var getFlippedCardsEqual = function() {
       flip.flip();
     }
 
+    locked = true;
     setTimeout(function() {
       console.log('No success...');
       console.log('Class Numbers: ' + flipped[0].classNumber + ", " + flipped[1].classNumber);
@@ -121,6 +124,7 @@ var getFlippedCardsEqual = function() {
           box.toggleClass(flipped[1].classNumber);
         }
       }
+      locked = false;
     }, 3000);
   }
 }
