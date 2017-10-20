@@ -77,6 +77,10 @@ var updateGame = function() {
   if (!secondTryImpending) {
     getFlippedCardsEqual();
   }
+
+  if (checkWin()) {
+    alert('yay!');
+  }
 }
 
 var getFlippedCardsEqual = function() {
@@ -119,4 +123,16 @@ var getFlippedCardsEqual = function() {
       }
     }, 3000);
   }
+}
+
+var checkWin = function() {
+  let victory = true;
+
+  for (image of imageOrdering) {
+    if (!image.success) {
+      victory = false;
+    }
+  }
+
+  return victory;
 }
