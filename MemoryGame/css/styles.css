@@ -9,24 +9,48 @@
 header {
   flex: 0 0 100%;
   text-align: center;
-  background-color: blue;
-  color: green;
+  background-color: #006;
+  font-family: "Helvetica";
+  color: white;
+  font-size: 32px;
+  margin: 30px;
 }
 
 .mainGrid {
-  flex: 0 0 100%;
+  flex: 1 1 100%;
   display: flex;
   flex-wrap: wrap;
   border: black none 3px;
+  margin: 0;
 }
 
 .mainGrid > div {
   text-align: center;
   flex: 1 1 20%;
   margin: 5px;
-  height: 100px;
+  height: 150px;
   border: black dashed 2px;
   background-color: rgba(255, 255, 255, 0.75);
+}
+
+.greyOut {
+  opacity: 0.9;
+}
+
+.fa {
+    color: white;
+    font-size: 40px;
+    width: 15%;
+}
+
+.fa:focus {
+    color: #97deb4;
+    text-decoration: none;
+}
+
+.fa:hover {
+    color: #38cd8c;
+    text-decoration: none;
 }
 
 .card1 {

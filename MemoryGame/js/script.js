@@ -11,7 +11,7 @@ Array.prototype.shuffle = function() {
     this[randomIndex] = this[i];
     this[i] = elementAtIndex;
   }
-}
+};
 
 $(function() {
   setUpImageOrdering();
@@ -26,15 +26,18 @@ var Card = function(nr) {
 
 Card.prototype.alert = function() {
   alert(this.classNumber);
-}
+};
 
 Card.prototype.flip = function() {
   this.flipped = !this.flipped;
-}
+};
 
 var setUpImageOrdering = function() {
-  for (let i = 1; i <= 8; i++) {
-    for (let j = 0; j < 2; j++) {
+  const distinctCards = 8;
+  const appearancesByCard = 2;
+
+  for (let i = 1; i <= distinctCards; i++) {
+    for (let j = 0; j < appearancesByCard; j++) {
       imageOrdering.push(new Card(i));
     }
   }
@@ -45,13 +48,18 @@ var setUpImageOrdering = function() {
 var setUpEvtListeners = function() {
   let counter = 0;
   let divBoxes = $('.mainGrid div');
+  const idAttribute = 'id';
+  const idValuePrefix = 'value';
+
   for (divBox of divBoxes) {
     const box = $(divBox);
-    box.attr('id', 'field' + counter++);
+    box.attr(idAttribute, idValuePrefix + counter++);
     box.click(function() {
-      const elemId = $(this).attr('id');
-      const id = elemId.substring('field'.length, elemId.length);
+      const selfBox = $(this);
+      const elemId = selfBox.attr(idAttribute);
+      const id = elemId.substring(idValuePrefix.length, elemId.length);
       let card = imageOrdering[id];
+
       console.log('Flipped: ' + card.flipped);
       console.log('Success: ' + card.success);
       console.log('Locked: ' + locked);
@@ -60,32 +68,55 @@ var setUpEvtListeners = function() {
         return;
       }
       console.log('ID: ' + id);
-      $(this).toggleClass(card.classNumber);
+      selfBox.toggleClass(card.classNumber);
       card.flip();
       console.log('Flipped after: ' + card.flipped);
       console.log('Success after: ' + card.success);
       updateGame();
+      checkPair();
+      checkWin();
     });
   }
+};
+
+const starRating = function() {
+  if (totalAttempts < 23) {
+    return '⭐⭐⭐⭐⭐';
+  }
+  if (totalAttempts < 27) {
+    return '⭐⭐⭐⭐';
+  }
+  if (totalAttempts < 31) {
+    return '⭐⭐⭐';
+  }
+  if (totalAttempts < 35) {
+    return '⭐⭐';
+  }
+  if (totalAttempts < 39) {
+    return '⭐';
+  }
+  if (totalAttempts < 43) {
+    return '💀';
+  }
+
+  else return '💀💀💀';
 }
 
 var updateGame = function() {
   totalAttempts++;
   secondTryImpending = !secondTryImpending;
 
-  console.log('Total Attempts: ' + totalAttempts);
+  console.log('#Turns: ' + totalAttempts);
   console.log('Second Try Impending: ' + secondTryImpending);
 
-  if (!secondTryImpending) {
-    getFlippedCardsEqual();
-  }
+  const attemptsParagraph = $("#attempts");
+  attemptsParagraph.text(starRating());
+};
 
-  if (checkWin()) {
-    alert('yay!');
+var checkPair = function() {
+  if (secondTryImpending) {
+    return;
   }
-}
-
-var getFlippedCardsEqual = function() {
   let flipped = [];
   for (imageOrder of imageOrdering) {
     if (imageOrder.flipped && !imageOrder.success) {
@@ -96,7 +127,10 @@ var getFlippedCardsEqual = function() {
   console.log('Flipped: ' + flipped);
   console.log('Class Numbers: ' + flipped[0].classNumber + ", " + flipped[1].classNumber);
 
-  let successPair = flipped[0].classNumber === flipped[1].classNumber;
+  const timeOut = 3000;
+  const flippedOverLeft = flipped[0].classNumber;
+  const flippedOverRight = flipped[1].classNumber;
+  let successPair = flippedOverRight === flippedOverLeft;
   console.log('Success?: ' + successPair);
 
   if (successPair) {
@@ -115,19 +149,19 @@ var getFlippedCardsEqual = function() {
       let divBoxes = $('.mainGrid div');
       for (divBox of divBoxes) {
         const box = $(divBox);
-        if (box.is("." + flipped[0].classNumber)) {
+        if (box.is("." + flippedOverLeft)) {
           console.log('Get rid of class for box ID: ' + box.attr('id'));
-          box.toggleClass(flipped[0].classNumber);
+          box.toggleClass(flippedOverLeft);
         }
-        if (box.is("." + flipped[1].classNumber)) {
+        if (box.is("." + flippedOverRight)) {
           console.log('Get rid of class for box ID: ' + box.attr('id'));
-          box.toggleClass(flipped[1].classNumber);
+          box.toggleClass(flippedOverRight);
         }
       }
       locked = false;
-    }, 3000);
+    }, timeOut);
   }
-}
+};
 
 var checkWin = function() {
   let victory = true;
@@ -138,5 +172,7 @@ var checkWin = function() {
     }
   }
 
-  return victory;
-}
+  if (victory) {
+    alert('Well done! Total number of clicks: ' + totalAttempts + ', rating: ' + starRating());
+  }
+};
