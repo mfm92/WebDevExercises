@@ -1,6 +1,9 @@
 .flex-container {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: auto;
   background: -webkit-linear-gradient(#006, #004d66, #00664d);
   background: -o-linear-gradient(#006, #004d66, #00664d);
   background: linear-gradient(#006, #004d66, #00664d);
@@ -9,7 +12,6 @@
 header {
   flex: 0 0 100%;
   text-align: center;
-  background-color: #006;
   font-family: "Helvetica";
   color: white;
   font-size: 32px;
@@ -17,40 +19,22 @@ header {
 }
 
 .mainGrid {
-  flex: 1 1 100%;
   display: flex;
   flex-wrap: wrap;
   border: black none 3px;
   margin: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .mainGrid > div {
   text-align: center;
-  flex: 1 1 20%;
-  margin: 5px;
-  height: 150px;
+  margin: .3vw;
   border: black dashed 2px;
+}
+
+.mainGrid > div:not(.success) {
   background-color: rgba(255, 255, 255, 0.75);
-}
-
-.greyOut {
-  opacity: 0.9;
-}
-
-.fa {
-    color: white;
-    font-size: 40px;
-    width: 15%;
-}
-
-.fa:focus {
-    color: #97deb4;
-    text-decoration: none;
-}
-
-.fa:hover {
-    color: #38cd8c;
-    text-decoration: none;
 }
 
 .card1 {
@@ -60,11 +44,19 @@ header {
   background-size: contain;
 }
 
+.mainGrid > div.successcard1 {
+  background-color: rgba(0, 0, 128, 0.75);
+}
+
 .card2 {
   background-image: url('../img/img2.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.mainGrid > div.successcard2 {
+  background-color: rgba(89, 0, 179, 0.75);
 }
 
 .card3 {
@@ -74,11 +66,19 @@ header {
   background-size: contain;
 }
 
+.mainGrid > div.successcard3 {
+  background-color: rgba(77, 77, 77, 0.75);
+}
+
 .card4 {
   background-image: url('../img/img4.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.mainGrid > div.successcard4 {
+  background-color: rgba(230, 184, 0, 0.75);
 }
 
 .card5 {
@@ -88,11 +88,19 @@ header {
   background-size: contain;
 }
 
+.mainGrid > div.successcard5 {
+  background-color: rgba(45, 134, 89, 0.75);
+}
+
 .card6 {
   background-image: url('../img/img6.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.mainGrid > div.successcard6 {
+  background-color: rgba(204, 0, 0, 0.75);
 }
 
 .card7 {
@@ -102,9 +110,58 @@ header {
   background-size: contain;
 }
 
+.mainGrid > div.successcard7 {
+  background-color: rgba(204, 204, 204, 0.75);
+}
+
 .card8 {
   background-image: url('../img/img8.png');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+.mainGrid > div.successcard8 {
+  background-color: rgba(0, 153, 153, 0.75);
+}
+
+/* depending on viewport width */
+@media screen and (max-width: 520px) {
+  .mainGrid {
+    width: 100vw;
+    height: 100vw;
+  }
+
+  .mainGrid > div {
+    flex: 1 1 40%;
+    height: 40%;
+  }
+
+  .flex-container {
+    height: auto;
+  }
+}
+
+@media screen and (min-width: 521px) and (max-width: 900px) {
+  .mainGrid {
+    width: 70vw;
+    height: 70vw;
+  }
+
+  .mainGrid > div {
+    flex: 1 1 20%;
+    height: 20%;
+  }
+}
+
+@media screen and (min-width: 901px) {
+  .mainGrid {
+    width: 40vw;
+    height: 40vw;
+  }
+
+  .mainGrid > div {
+    flex: 1 1 20%;
+    height: 20%;
+  }
 }
