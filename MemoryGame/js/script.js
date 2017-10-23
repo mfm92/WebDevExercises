@@ -118,7 +118,7 @@ var checkPair = function() {
     for (flip of flipped) {
       flip.success = true;
     }
-    $("." + flippedOverLeft).toggleClass('success' + flipped[0].classNumber);
+    $("." + flippedOverLeft).toggleClass('success' + flipped[0].classNumber, 1000);
   } else {
     for (flip of flipped) {
       flip.flip();
@@ -145,6 +145,13 @@ var checkWin = function() {
   }
 
   if (victory) {
-    alert('Well done! Total number of clicks: ' + totalAttempts + ', rating: ' + starRating());
+    const flexContainer = $(".flex-container");
+    const innerHTMLWin = "<div class='successPage'>Congratulations! You finished the memory game in " +
+        totalAttempts + " clicks.<br>Rating: " + starRating() + "</div>";
+    flexContainer.children().fadeOut('slow', function() {
+      flexContainer.empty();
+      flexContainer.append(innerHTMLWin);
+      flexContainer.children().fadeIn('slow');
+    });
   }
 };
