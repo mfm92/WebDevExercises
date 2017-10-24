@@ -2,6 +2,7 @@ var secondTryImpending = false;
 var totalAttempts = 0;
 var imageOrdering = [];
 var locked = false;
+var startDate, endDate;
 
 Array.prototype.shuffle = function() {
   for (var i = 0; i < this.length; i++) {
@@ -16,6 +17,7 @@ Array.prototype.shuffle = function() {
 $(function() {
   setUpImageOrdering();
   setUpEvtListeners();
+  startDate = new Date();
 });
 
 var Card = function(nr) {
@@ -69,23 +71,26 @@ var setUpEvtListeners = function() {
 };
 
 const starRating = function() {
-  if (totalAttempts < 22) {
+  if (totalAttempts < 21) {
     return '⭐⭐⭐⭐⭐';
   }
   if (totalAttempts < 27) {
     return '⭐⭐⭐⭐';
   }
-  if (totalAttempts < 32) {
+  if (totalAttempts < 33) {
     return '⭐⭐⭐';
   }
-  if (totalAttempts < 37) {
+  if (totalAttempts < 39) {
     return '⭐⭐';
   }
-  if (totalAttempts < 42) {
+  if (totalAttempts < 45) {
     return '⭐';
   }
-  if (totalAttempts < 47) {
+  if (totalAttempts < 51) {
     return '💀';
+  }
+  if (totalAttempts < 57) {
+    return '💀💀';
   }
 
   else return '💀💀💀';
@@ -109,7 +114,7 @@ var checkPair = function() {
     }
   }
 
-  const timeOut = 3000;
+  const timeOut = 300;
   const flippedOverLeft = flipped[0].classNumber;
   const flippedOverRight = flipped[1].classNumber;
   let successPair = flippedOverRight === flippedOverLeft;
@@ -127,11 +132,11 @@ var checkPair = function() {
     locked = true;
     $("." + flippedOverLeft).effect('shake');
     $("." + flippedOverRight).effect('shake');
-    setTimeout(function() {
-      $("." + flippedOverLeft).toggleClass(flippedOverLeft, 'slow');
-      $("." + flippedOverRight).toggleClass(flippedOverRight, 'slow');
+
+    $("." + flippedOverLeft).toggleClass(flippedOverLeft, timeOut);
+    $("." + flippedOverRight).toggleClass(flippedOverRight, timeOut).promise().done(function() {
       locked = false;
-    }, timeOut);
+    })
   }
 };
 
@@ -145,13 +150,15 @@ var checkWin = function() {
   }
 
   if (victory) {
+    endDate = new Date();
+    const timeDiff = (endDate - startDate) / 1000; // divide by ms
     const flexContainer = $(".flex-container");
-    const innerHTMLWin = "<div class='successPage'>Congratulations! You finished the memory game in " +
-        totalAttempts + " clicks.<br>Rating: " + starRating() + "</div>";
+    const innerHTMLWin = "<div class='successPage'><p>Congratulations! You finished the memory game in " +
+        totalAttempts + " clicks.</p><p>Rating: " + starRating() + "</p><p>Time needed (seconds): " + timeDiff + "</p></div>";
     flexContainer.children().fadeOut('slow', function() {
       flexContainer.empty();
       flexContainer.append(innerHTMLWin);
-      flexContainer.children().fadeIn('slow');
+      flexContainer.children().slideDown('slow');
     });
   }
 };
