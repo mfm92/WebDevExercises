@@ -1,11 +1,11 @@
-var secondTryImpending = false;
-var totalAttempts = 0;
-var imageOrdering = [];
-var locked = false;
-var startDate, endDate;
+let secondTryImpending = false;
+let totalAttempts = 0;
+let imageOrdering = [];
+let locked = false;
+let startDate;
 
 Array.prototype.shuffle = function() {
-  for (var i = 0; i < this.length; i++) {
+  for (let i = 0; i < this.length; i++) {
     const randomIndex = Math.floor(Math.random() * this.length);
     const elementAtIndex = this[randomIndex];
 
@@ -30,7 +30,7 @@ Card.prototype.flip = function() {
   this.flipped = !this.flipped;
 };
 
-var setUpImageOrdering = function() {
+const setUpImageOrdering = function() {
   const distinctCards = 8;
   const appearancesByCard = 2;
 
@@ -43,11 +43,12 @@ var setUpImageOrdering = function() {
   imageOrdering.shuffle();
 };
 
-var setUpEvtListeners = function() {
+const setUpEvtListeners = function() {
   let counter = 0;
   let divBoxes = $('.mainGrid div');
   const idAttribute = 'id';
   const idValuePrefix = 'value';
+  const flipAnimationDuration = 350;
 
   for (divBox of divBoxes) {
     const box = $(divBox);
@@ -61,10 +62,11 @@ var setUpEvtListeners = function() {
       if (card.flipped || card.success || locked) {
         return;
       }
-      selfBox.hide('fade', null, 200, function() {
+
+      card.flip();
+      selfBox.hide('fade', null, flipAnimationDuration/2, function() {
         selfBox.toggleClass(card.classNumber);
-        selfBox.show('clip', null, 200, function() {
-          card.flip();
+        selfBox.show('clip', null, flipAnimationDuration/2, function() {
           updateGame();
           checkPair();
           checkWin();
@@ -75,39 +77,49 @@ var setUpEvtListeners = function() {
 };
 
 const starRating = function() {
-  if (totalAttempts < 21) {
+  const borders = {
+    excellent: 21,
+    veryGood: 27,
+    good: 33,
+    ok: 39,
+    stillAcceptable: 45,
+    bad: 51,
+    veryBad: 57
+  };
+
+  if (totalAttempts < borders.excellent) {
     return '⭐⭐⭐⭐⭐';
   }
-  if (totalAttempts < 27) {
+  if (totalAttempts < borders.veryGood) {
     return '⭐⭐⭐⭐';
   }
-  if (totalAttempts < 33) {
+  if (totalAttempts < borders.good) {
     return '⭐⭐⭐';
   }
-  if (totalAttempts < 39) {
+  if (totalAttempts < borders.ok) {
     return '⭐⭐';
   }
-  if (totalAttempts < 45) {
+  if (totalAttempts < borders.stillAcceptable) {
     return '⭐';
   }
-  if (totalAttempts < 51) {
+  if (totalAttempts < borders.bad) {
     return '💀';
   }
-  if (totalAttempts < 57) {
+  if (totalAttempts < borders.veryBad) {
     return '💀💀';
   }
 
   else return '💀💀💀';
 }
 
-var updateGame = function() {
+const updateGame = function() {
   totalAttempts++;
   secondTryImpending = !secondTryImpending;
   const attemptsParagraph = $("#attempts");
   attemptsParagraph.text(starRating());
 };
 
-var checkPair = function() {
+const checkPair = function() {
   if (secondTryImpending) {
     return;
   }
@@ -118,8 +130,6 @@ var checkPair = function() {
     }
   }
 
-  const timeOut = 300;
-  const matchFadeColor = 800;
   const flippedOverLeft = flipped[0].classNumber;
   const flippedOverRight = flipped[1].classNumber;
   let successPair = flippedOverRight === flippedOverLeft;
@@ -128,26 +138,28 @@ var checkPair = function() {
     for (flip of flipped) {
       flip.success = true;
     }
-    $('.' + flippedOverLeft).toggleClass('success' + flipped[0].classNumber, matchFadeColor);
+    const matchFadeColor = 800;
+    const flippedLeftElement = $('.' + flippedOverLeft);
+    flippedLeftElement.toggleClass('success' + flipped[0].classNumber, matchFadeColor);
   } else {
     for (flip of flipped) {
       flip.flip();
     }
 
     locked = true;
-
+    const flipBackAnimationDuration = 500;
     const flippedElements = $('.' + flippedOverLeft + ', .' + flippedOverRight);
     flippedElements.each(function() {
       const flippedElement = $(this);
-      flippedElement.effect('shake', null, 250, function() {
-        flippedElement.hide('fade', null, 200, function() {
+      flippedElement.effect('shake', null, flipBackAnimationDuration * 0.4, function() {
+        flippedElement.hide('fade', null, flipBackAnimationDuration * 0.3, function() {
           if (flippedElement.hasClass(flippedOverLeft)) {
             flippedElement.toggleClass(flippedOverLeft);
           }
           if (flippedElement.hasClass(flippedOverRight)) {
             flippedElement.toggleClass(flippedOverRight);
           }
-          flippedElement.show('clip', null, 200, function() {
+          flippedElement.show('clip', null, flipBackAnimationDuration * 0.3, function() {
             if (locked) {
               locked = false;
             }
@@ -158,7 +170,7 @@ var checkPair = function() {
   }
 };
 
-var checkWin = function() {
+const checkWin = function() {
   let victory = true;
 
   for (image of imageOrdering) {
@@ -170,6 +182,7 @@ var checkWin = function() {
   if (victory) {
     const timeDiff = (new Date() - startDate) / 1000; // divide by ms
     const flexContainer = $(".flex-container");
+    const timeDelayShowPage = 2500;
     const innerHTMLWin = "<div class='successPage'><p>Congratulations! You finished the memory game in " +
         totalAttempts + " clicks.</p><p>Rating: " + starRating() + "</p><p>Time needed (seconds): " + timeDiff + "</p></div>";
     setTimeout(function() {
@@ -178,6 +191,6 @@ var checkWin = function() {
         flexContainer.append(innerHTMLWin);
         flexContainer.children().slideDown('slow');
       });
-    }, 2500);
+    }, timeDelayShowPage);
   }
 };
