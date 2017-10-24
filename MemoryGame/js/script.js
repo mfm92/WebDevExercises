@@ -61,11 +61,15 @@ var setUpEvtListeners = function() {
       if (card.flipped || card.success || locked) {
         return;
       }
-      selfBox.toggleClass(card.classNumber);
-      card.flip();
-      updateGame();
-      checkPair();
-      checkWin();
+      selfBox.hide('fade', null, 200, function() {
+        selfBox.toggleClass(card.classNumber);
+        selfBox.show('clip', null, 200, function() {
+          card.flip();
+          updateGame();
+          checkPair();
+          checkWin();
+        });
+      });
     });
   }
 };
@@ -115,6 +119,7 @@ var checkPair = function() {
   }
 
   const timeOut = 300;
+  const matchFadeColor = 800;
   const flippedOverLeft = flipped[0].classNumber;
   const flippedOverRight = flipped[1].classNumber;
   let successPair = flippedOverRight === flippedOverLeft;
@@ -123,20 +128,33 @@ var checkPair = function() {
     for (flip of flipped) {
       flip.success = true;
     }
-    $("." + flippedOverLeft).toggleClass('success' + flipped[0].classNumber, 1000);
+    $('.' + flippedOverLeft).toggleClass('success' + flipped[0].classNumber, matchFadeColor);
   } else {
     for (flip of flipped) {
       flip.flip();
     }
 
     locked = true;
-    $("." + flippedOverLeft).effect('shake');
-    $("." + flippedOverRight).effect('shake');
 
-    $("." + flippedOverLeft).toggleClass(flippedOverLeft, timeOut);
-    $("." + flippedOverRight).toggleClass(flippedOverRight, timeOut).promise().done(function() {
-      locked = false;
-    })
+    const flippedElements = $('.' + flippedOverLeft + ', .' + flippedOverRight);
+    flippedElements.each(function() {
+      const flippedElement = $(this);
+      flippedElement.effect('shake', null, 250, function() {
+        flippedElement.hide('fade', null, 200, function() {
+          if (flippedElement.hasClass(flippedOverLeft)) {
+            flippedElement.toggleClass(flippedOverLeft);
+          }
+          if (flippedElement.hasClass(flippedOverRight)) {
+            flippedElement.toggleClass(flippedOverRight);
+          }
+          flippedElement.show('clip', null, 200, function() {
+            if (locked) {
+              locked = false;
+            }
+          });
+        });
+      });
+    });
   }
 };
 
@@ -150,15 +168,16 @@ var checkWin = function() {
   }
 
   if (victory) {
-    endDate = new Date();
-    const timeDiff = (endDate - startDate) / 1000; // divide by ms
+    const timeDiff = (new Date() - startDate) / 1000; // divide by ms
     const flexContainer = $(".flex-container");
     const innerHTMLWin = "<div class='successPage'><p>Congratulations! You finished the memory game in " +
         totalAttempts + " clicks.</p><p>Rating: " + starRating() + "</p><p>Time needed (seconds): " + timeDiff + "</p></div>";
-    flexContainer.children().fadeOut('slow', function() {
-      flexContainer.empty();
-      flexContainer.append(innerHTMLWin);
-      flexContainer.children().slideDown('slow');
-    });
+    setTimeout(function() {
+      flexContainer.children().fadeOut('slow', function() {
+        flexContainer.empty();
+        flexContainer.append(innerHTMLWin);
+        flexContainer.children().slideDown('slow');
+      });
+    }, 2500);
   }
 };
