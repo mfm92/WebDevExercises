@@ -6,6 +6,18 @@ body {
   height: 100vh;
 }
 
+#eagerLoadImgs {
+  height: 0;
+  background-image: url('../img/img1.png');
+  background-image: url('../img/img2.png');
+  background-image: url('../img/img3.png');
+  background-image: url('../img/img4.png');
+  background-image: url('../img/img5.png');
+  background-image: url('../img/img6.png');
+  background-image: url('../img/img7.png');
+  background-image: url('../img/img8.png');
+}
+
 .flex-container {
   display: flex;
   flex-wrap: wrap;
