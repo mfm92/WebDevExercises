@@ -3,6 +3,7 @@ let totalAttempts = 0;
 let imageOrdering = [];
 let locked = false;
 let startDate;
+let clock;
 
 Array.prototype.shuffle = function() {
   for (let i = 0; i < this.length; i++) {
@@ -17,6 +18,8 @@ Array.prototype.shuffle = function() {
 $(function() {
   setUpImageOrdering();
   setUpEvtListeners();
+  setUpButtons();
+  setUpClock();
   startDate = new Date();
 });
 
@@ -28,6 +31,45 @@ var Card = function(nr) {
 
 Card.prototype.flip = function() {
   this.flipped = !this.flipped;
+};
+
+const restart = function() {
+  totalAttempts = 0;
+  locked = false;
+  secondTryImpending = false;
+  imageOrdering = [];
+
+  const attemptsParagraph = $("#attempts");
+  attemptsParagraph.text(starRating());
+
+  let divBoxes = $('.mainGrid div');
+  for (divBox of divBoxes) {
+    const box = $(divBox);
+    box.attr('class', '');
+  }
+
+  setUpImageOrdering();
+  setUpEvtListeners();
+  setUpClock();
+
+  startDate = new Date();
+  clock.setTime(0);
+  clock.start();
+};
+
+const setUpClock = function() {
+  clock = $('#clock').FlipClock({
+    autoStart: false,
+    clockFace: 'MinuteCounter'
+  });
+  clock.start();
+}
+
+const setUpButtons = function() {
+  const button = $("button");
+  button.click(function() {
+    restart();
+  });
 };
 
 const setUpImageOrdering = function() {
@@ -181,13 +223,14 @@ const checkWin = function() {
 
   if (victory) {
     const timeDiff = (new Date() - startDate) / 1000; // divide by ms
+    clock.stop();
     const flexContainer = $(".flex-container");
     const timeDelayShowPage = 2500;
     const innerHTMLWin = "<div class='successPage'><p>Congratulations! You finished the memory game in " +
         totalAttempts + " clicks.</p><p>Rating: " + starRating() + "</p><p>Time needed (seconds): " + timeDiff + "</p></div>";
     setTimeout(function() {
       flexContainer.children().fadeOut('slow', function() {
-        flexContainer.empty();
+        flexContainer.children().empty();
         flexContainer.append(innerHTMLWin);
         flexContainer.children().slideDown('slow');
       });

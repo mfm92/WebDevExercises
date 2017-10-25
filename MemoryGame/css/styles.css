@@ -22,6 +22,7 @@ header {
   width: 100%;
   height: 20vh;
   align-items: center;
+  justify-content: center;
 }
 
 .mainGrid {
@@ -52,6 +53,23 @@ header {
   margin: 50px;
   color: white;
   display: none;
+}
+
+.invisible {
+  display: none;
+}
+
+button {
+  background-color: grey;
+  font-size: 15px;
+  text-align: center;
+  align-items: center;
+  width: 20%;
+}
+
+#clock {
+  zoom: 0.6;
+  font-size: 0;
 }
 
 .card1 {
