@@ -48,23 +48,34 @@ header {
 }
 
 .successPage {
-  font-size: 30px;
+  font-size: 20px;
   text-align: center;
-  margin: 50px;
+  margin: 0;
   color: white;
   display: none;
 }
 
-.invisible {
-  display: none;
+#neededAttempts, #neededTime, #finalStarRating {
+  display: block;
+  visibility: hidden;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+#playAgainButton {
+  visibility: hidden;
 }
 
 button {
-  background-color: grey;
-  font-size: 15px;
-  text-align: center;
-  align-items: center;
-  width: 20%;
+  background: linear-gradient(135deg, #22bf27 0%,#20aa7f 50%,#64c41f 51%,#d8d875 100%);
+  width: 50%;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+  height: auto;
+  padding: 2%;
+  border: none;
+  text-decoration: none;
 }
 
 #clock {

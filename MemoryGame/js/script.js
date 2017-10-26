@@ -2,7 +2,7 @@ let secondTryImpending = false;
 let totalAttempts = 0;
 let imageOrdering = [];
 let locked = false;
-let startDate;
+let startDate, endDate;
 let clock;
 
 Array.prototype.shuffle = function() {
@@ -39,7 +39,7 @@ const restart = function() {
   secondTryImpending = false;
   imageOrdering = [];
 
-  const attemptsParagraph = $("#attempts");
+  const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
 
   let divBoxes = $('.mainGrid div');
@@ -57,6 +57,20 @@ const restart = function() {
   clock.start();
 };
 
+const playAgain = function() {
+  const successPage = $(".successPage");
+  const container = $(".flex-container");
+  const fadeDuration = 1000;
+
+  successPage.slideUp('slow', function() {
+    $("#neededAttempts, #neededTime, #finalStarRating, #playAgainButton").css({
+      visibility: 'hidden'
+    });
+    restart();
+    container.children().show('fade', null, fadeDuration, undefined);
+  });
+}
+
 const setUpClock = function() {
   clock = $('#clock').FlipClock({
     autoStart: false,
@@ -66,9 +80,13 @@ const setUpClock = function() {
 }
 
 const setUpButtons = function() {
-  const button = $("button");
-  button.click(function() {
+  const restartButton = $("#restartButton");
+  const playAgainButton = $("#playAgainButton");
+  restartButton.click(function() {
     restart();
+  });
+  playAgainButton.click(function() {
+    playAgain();
   });
 };
 
@@ -157,7 +175,7 @@ const starRating = function() {
 const updateGame = function() {
   totalAttempts++;
   secondTryImpending = !secondTryImpending;
-  const attemptsParagraph = $("#attempts");
+  const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
 };
 
@@ -222,18 +240,43 @@ const checkWin = function() {
   }
 
   if (victory) {
-    const timeDiff = (new Date() - startDate) / 1000; // divide by ms
+    endDate = new Date();
     clock.stop();
     const flexContainer = $(".flex-container");
+    const successPage = $(".successPage");
     const timeDelayShowPage = 2500;
-    const innerHTMLWin = "<div class='successPage'><p>Congratulations! You finished the memory game in " +
-        totalAttempts + " clicks.</p><p>Rating: " + starRating() + "</p><p>Time needed (seconds): " + timeDiff + "</p></div>";
+
     setTimeout(function() {
       flexContainer.children().fadeOut('slow', function() {
-        flexContainer.children().empty();
-        flexContainer.append(innerHTMLWin);
-        flexContainer.children().slideDown('slow');
+        successPage.slideDown('slow', fadeInStats);
       });
     }, timeDelayShowPage);
   }
+};
+
+const fadeInStats = function() {
+  const textDelayDuration = 1000;
+  const neededAttempts = $("#neededAttempts");
+  const neededTime = $("#neededTime");
+  const finalStarRating = $("#finalStarRating");
+  const playAgainButton = $("#playAgainButton");
+  const timeDiff = (endDate-startDate) / 1000;
+
+  $("#neededAttempts, #neededTime, #finalStarRating, #playAgainButton").css({
+    visibility: 'visible',
+    opacity: 0.0
+  });
+
+  neededAttempts.text(totalAttempts);
+  neededTime.text(timeDiff);
+  finalStarRating.text(starRating());
+
+  const opacity = { opacity: 1.0 };
+  neededAttempts.animate(opacity, textDelayDuration, function() {
+    neededTime.animate(opacity, textDelayDuration, function() {
+      finalStarRating.animate(opacity, textDelayDuration, function() {
+        playAgainButton.animate(opacity, textDelayDuration, undefined);
+      });
+    });
+  });
 };

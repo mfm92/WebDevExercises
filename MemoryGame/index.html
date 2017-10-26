@@ -24,15 +24,29 @@
   <title>Memory Game</title>
 </head>
 <body>
+  <div class="successPage">
+    <p>
+      Congratulations! You finished the memory game in...
+      <span id="neededAttempts"></span>
+      ...clicks, after...
+      <span id="neededTime"></span>
+      ...seconds!
+    </p>
+    <p>
+      <strong>Rating</strong>
+      <span id="finalStarRating"></span>
+    </p>
+    <button type="button" id="playAgainButton">Play again!</button>
+  </div>
   <div class="flex-container">
     <header>
       <span id="title">
         Memory Game
       </span>
-      <span id="attempts">
+      <span id="starRating">
         ⭐⭐⭐⭐⭐
       </span>
-      <button type="button">Restart</button>
+      <button type="button" id="restartButton">Restart</button>
       <div id="clock"></div>
     </header>
     <div class="mainGrid">
