@@ -13,3 +13,7 @@ No additional installations or downloads necessary. The application will run by 
 ## Known issues
 
 The images might not load immediately upon opening the application if using any browser other than Chrome or Firefox.
+
+## What are these images?!
+
+These are logos of selected football clubs in Austria. Chances are you've never seen them before. Chances are you'll never see them again unless one of them wins the Champions League... in which case hell has officially frozen over.
