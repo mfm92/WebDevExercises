@@ -160,7 +160,7 @@ const handleClick = function(idAttribute, idValuePrefix) {
 
   // Do nothing if the clicked card is either currently flipped,
   // has already been matched successfully
-  if (card.flipped || card.success) {
+  if (card.flipped || card.success || retrieveFlippedCards().length > 2) {
     return;
   }
 
