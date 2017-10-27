@@ -129,7 +129,9 @@ const setUpEvtListeners = function() {
         selfBox.show('clip', null, flipAnimationDuration/2, function() {
           updateGame();
           checkPair();
-          checkWin();
+          if (checkWin()) {
+            displayWin();
+          };
         });
       });
     });
@@ -138,38 +140,18 @@ const setUpEvtListeners = function() {
 
 const starRating = function() {
   const borders = {
-    excellent: 21,
-    veryGood: 27,
-    good: 33,
-    ok: 39,
-    stillAcceptable: 45,
-    bad: 51,
-    veryBad: 57
+    good: 26,
+    ok: 41,
   };
 
-  if (totalAttempts < borders.excellent) {
-    return '⭐⭐⭐⭐⭐';
-  }
-  if (totalAttempts < borders.veryGood) {
-    return '⭐⭐⭐⭐';
-  }
   if (totalAttempts < borders.good) {
     return '⭐⭐⭐';
   }
   if (totalAttempts < borders.ok) {
     return '⭐⭐';
   }
-  if (totalAttempts < borders.stillAcceptable) {
-    return '⭐';
-  }
-  if (totalAttempts < borders.bad) {
-    return '💀';
-  }
-  if (totalAttempts < borders.veryBad) {
-    return '💀💀';
-  }
 
-  else return '💀💀💀';
+  return '⭐';
 }
 
 const updateGame = function() {
@@ -239,19 +221,21 @@ const checkWin = function() {
     }
   }
 
-  if (victory) {
-    endDate = new Date();
-    clock.stop();
-    const flexContainer = $(".flex-container");
-    const successPage = $(".successPage");
-    const timeDelayShowPage = 2500;
+  return victory;
+};
 
-    setTimeout(function() {
-      flexContainer.children().fadeOut('slow', function() {
-        successPage.slideDown('slow', fadeInStats);
-      });
-    }, timeDelayShowPage);
-  }
+const displayWin = function() {
+  endDate = new Date();
+  clock.stop();
+  const flexContainer = $(".flex-container");
+  const successPage = $(".successPage");
+  const timeDelayShowPage = 2500;
+
+  setTimeout(function() {
+    flexContainer.children().fadeOut('slow', function() {
+      successPage.slideDown('slow', fadeInStats);
+    });
+  }, timeDelayShowPage);
 };
 
 const fadeInStats = function() {
