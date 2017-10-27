@@ -15,7 +15,7 @@ Array.prototype.shuffle = function() {
   }
 };
 
-$(function() {
+$(document).ready(function() {
   setUpImageOrdering();
   setUpEvtListeners();
   setUpButtons();

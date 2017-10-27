@@ -8,19 +8,20 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.css">
 
-  <!-- Include Social Media Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Include Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
 
-  <!-- preload images -->
-  <link rel="preload" href="img/img1.png" />
-  <link rel="preload" href="img/img2.png" />
-  <link rel="preload" href="img/img3.png" />
-  <link rel="preload" href="img/img4.png" />
-  <link rel="preload" href="img/img5.png" />
-  <link rel="preload" href="img/img6.png" />
-  <link rel="preload" href="img/img7.png" />
-  <link rel="preload" href="img/img8.png" />
+  <!-- Preload images -->
+  <link rel="preload" href="img/img1.png" as="image"/>
+  <link rel="preload" href="img/img2.png" as="image"/>
+  <link rel="preload" href="img/img3.png" as="image"/>
+  <link rel="preload" href="img/img4.png" as="image"/>
+  <link rel="preload" href="img/img5.png" as="image"/>
+  <link rel="preload" href="img/img6.png" as="image"/>
+  <link rel="preload" href="img/img7.png" as="image"/>
+  <link rel="preload" href="img/img8.png" as="image"/>
+
+  <!-- Title -->
   <title>Memory Game</title>
 </head>
 <body>
@@ -40,16 +41,18 @@
   </div>
   <div class="flex-container">
     <header>
-      <span id="title">
-        Memory Game
-      </span>
-      <span id="starRating">
-        ⭐⭐⭐⭐⭐
-      </span>
+      <p>
+        <span id="title">
+          Memory Game
+        </span>
+        <span id="starRating">
+          ⭐⭐⭐⭐⭐
+        </span>
+      </p>
       <button type="button" id="restartButton">Restart</button>
       <div id="clock"></div>
     </header>
-    <div class="mainGrid">
+    <main class="mainGrid">
       <div></div>
       <div></div>
       <div></div>
@@ -66,7 +69,7 @@
       <div></div>
       <div></div>
       <div></div>
-    </div>
+    </main>
   </div>
   <!-- Include jQuery + jQueryUI -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
