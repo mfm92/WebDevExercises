@@ -62,8 +62,7 @@ const restart = function() {
   setUpImageOrdering();
 
   // re-start timer
-  clock.setTime(0);
-  clock.start();
+  setUpClock();
 };
 
 /**
