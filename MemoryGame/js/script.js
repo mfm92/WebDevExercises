@@ -1,7 +1,6 @@
 let secondTryImpending = false;
 let totalAttempts = 0;
 let imageOrdering = [];
-let locked = false;
 let clock;
 
 /**
@@ -45,7 +44,6 @@ $(document).ready(function() {
 const restart = function() {
   // reset global values
   totalAttempts = 0;
-  locked = false;
   secondTryImpending = false;
   imageOrdering = [];
 
@@ -64,7 +62,8 @@ const restart = function() {
   setUpImageOrdering();
 
   // re-start timer
-  setUpClock();
+  clock.setTime(0);
+  clock.start();
 };
 
 /**
@@ -134,39 +133,51 @@ const setUpImageOrdering = function() {
 */
 const setUpEvtListeners = function() {
   let counter = 0;
-  let divBoxes = $(".mainGrid div");
-  const idAttribute = "id";
+  const divBoxes = $(".mainGrid div");
   const idValuePrefix = "value";
-  const flipAnimationDuration = 350;
+  const idAttribute = "id";
 
   for (divBox of divBoxes) {
     const box = $(divBox);
     box.attr(idAttribute, idValuePrefix + counter++);
     box.click(function() {
-      const selfBox = $(this);
-      const elemId = selfBox.attr(idAttribute);
-      const id = elemId.substring(idValuePrefix.length, elemId.length);
-      let card = imageOrdering[id];
-
-      if (card.flipped || card.success || locked) {
-        return;
-      }
-
-      card.flip();
-      selfBox.hide("fade", null, flipAnimationDuration/2, function() {
-        selfBox.toggleClass(card.classNumber);
-        selfBox.show("clip", null, flipAnimationDuration/2, function() {
-          updateGame();
-          if (!secondTryImpending) {
-            animateCheck();
-            if (checkWin()) {
-              displayWin();
-            }
-          }
-        });
-      });
+      handleClick.call(this, idAttribute, idValuePrefix);
     });
   }
+};
+
+/**
+* @description What happens if the user clicks on a box.
+* @param {object} idAttribute: "id"
+* @param {object} idValuePrefix: the value of the "id" attribute
+*   without the incremental value at the end
+*/
+const handleClick = function(idAttribute, idValuePrefix) {
+  const flipAnimationDuration = 350;
+  const selfBox = $(this);
+  const elemId = selfBox.attr(idAttribute);
+  const id = elemId.substring(idValuePrefix.length, elemId.length);
+  let card = imageOrdering[id];
+
+  // Do nothing if the clicked card is either currently flipped,
+  // has already been matched successfully
+  if (card.flipped || card.success) {
+    return;
+  }
+
+  card.flip();
+  selfBox.hide("fade", null, flipAnimationDuration/2, function() {
+    selfBox.toggleClass(card.classNumber);
+    selfBox.show("clip", null, flipAnimationDuration/2, function() {
+      updateGame();
+      if (!secondTryImpending) {
+        animateCheck();
+        if (checkWin()) {
+          displayWin();
+        }
+      }
+    });
+  });
 };
 
 /**
@@ -199,6 +210,9 @@ const updateGame = function() {
   attemptsParagraph.text(starRating());
 };
 
+/**
+* @description Return array with flipped card objects
+*/
 const retrieveFlippedCards = function() {
   let flipped = [];
   for (imageOrder of imageOrdering) {
@@ -210,11 +224,19 @@ const retrieveFlippedCards = function() {
   return flipped;
 };
 
+/**
+* @description Do both flipped cards contain the same image?
+* @param {object} flipped: Array of flipped card objects
+*/
 const checkMatch = function(flipped) {
   // flipped will always be an array of *two* card objects
   return flipped[0].classNumber === flipped[1].classNumber;
 };
 
+/**
+* @description Show animations in the event of a match
+* @param {object} flipped: Array of flipped card objects
+*/
 const displayMatch = function(flipped) {
   for (flip of flipped) {
     flip.success = true;
@@ -225,32 +247,34 @@ const displayMatch = function(flipped) {
   flippedLeftElement.toggleClass("success" + flippedMatchClass, matchFadeColor);
 };
 
+/**
+* @description Show animations in the event of a mismatch
+* @param {object} flipped: Array of flipped card objects
+*/
 const flipBackNonMatching = function(flipped) {
   for (flip of flipped) {
     flip.flip();
   }
   const flippedOverLeft = flipped[0].classNumber;
   const flippedOverRight = flipped[1].classNumber;
-  locked = true;
-  const flipBackAnimationDuration = 500;
+  const flipBackAnimationDuration = 700;
+  const showMismatchDuration = 100;
   const flippedElements = $("." + flippedOverLeft + ", ." + flippedOverRight);
 
   flippedElements.each(function() {
     const flippedElement = $(this);
     flippedElement.effect("shake", null, flipBackAnimationDuration * 0.4, function() {
-      flippedElement.hide("fade", null, flipBackAnimationDuration * 0.3, function() {
-        if (flippedElement.hasClass(flippedOverLeft)) {
-          flippedElement.toggleClass(flippedOverLeft);
-        }
-        if (flippedElement.hasClass(flippedOverRight)) {
-          flippedElement.toggleClass(flippedOverRight);
-        }
-        flippedElement.show("clip", null, flipBackAnimationDuration * 0.3, function() {
-          if (locked) {
-            locked = false;
+      setTimeout(function() {
+        flippedElement.hide("fade", null, flipBackAnimationDuration * 0.3, function() {
+          if (flippedElement.hasClass(flippedOverLeft)) {
+            flippedElement.toggleClass(flippedOverLeft);
           }
+          if (flippedElement.hasClass(flippedOverRight)) {
+            flippedElement.toggleClass(flippedOverRight);
+          }
+          flippedElement.show("clip", null, flipBackAnimationDuration * 0.3, undefined);
         });
-      });
+      }, showMismatchDuration);
     });
   });
 };
@@ -268,6 +292,9 @@ const animateCheck = function() {
   }
 };
 
+/**
+* @description Check if all matches have been detected.
+*/
 const checkWin = function() {
   let victory = true;
 
@@ -280,11 +307,14 @@ const checkWin = function() {
   return victory;
 };
 
+/**
+* @description Display page once all matches have been found
+*/
 const displayWin = function() {
   clock.stop();
   const flexContainer = $(".flex-container");
   const successPage = $(".successPage");
-  const timeDelayShowPage = 2500;
+  const timeDelayShowPage = 2000;
 
   setTimeout(function() {
     flexContainer.children().fadeOut("slow", function() {
@@ -293,8 +323,13 @@ const displayWin = function() {
   }, timeDelayShowPage);
 };
 
+/**
+* @description Blend in statistics about the previous game, such
+*   as number of necessary clicks, needed time and the star rating
+*   at the end.
+*/
 const fadeInStats = function() {
-  const textDelayDuration = 1000;
+  const textDelayDuration = 500;
   const neededAttempts = $("#neededAttempts");
   const neededTime = $("#neededTime");
   const finalStarRating = $("#finalStarRating");
