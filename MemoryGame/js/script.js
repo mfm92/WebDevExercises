@@ -24,7 +24,7 @@ $(document).ready(function() {
 });
 
 var Card = function(nr) {
-  this.classNumber = 'card' + nr;
+  this.classNumber = "card" + nr;
   this.flipped = false;
   this.success = false;
 };
@@ -42,10 +42,10 @@ const restart = function() {
   const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
 
-  let divBoxes = $('.mainGrid div');
+  let divBoxes = $(".mainGrid div");
   for (divBox of divBoxes) {
     const box = $(divBox);
-    box.attr('class', '');
+    box.attr("class", "");
   }
 
   setUpImageOrdering();
@@ -62,19 +62,19 @@ const playAgain = function() {
   const container = $(".flex-container");
   const fadeDuration = 1000;
 
-  successPage.slideUp('slow', function() {
+  successPage.slideUp("slow", function() {
     $("#neededAttempts, #neededTime, #finalStarRating, #playAgainButton").css({
-      visibility: 'hidden'
+      visibility: "hidden"
     });
     restart();
-    container.children().show('fade', null, fadeDuration, undefined);
+    container.children().show("fade", null, fadeDuration, undefined);
   });
 }
 
 const setUpClock = function() {
-  clock = $('#clock').FlipClock({
+  clock = $("#clock").FlipClock({
     autoStart: false,
-    clockFace: 'MinuteCounter'
+    clockFace: "MinuteCounter"
   });
   clock.start();
 }
@@ -105,9 +105,9 @@ const setUpImageOrdering = function() {
 
 const setUpEvtListeners = function() {
   let counter = 0;
-  let divBoxes = $('.mainGrid div');
-  const idAttribute = 'id';
-  const idValuePrefix = 'value';
+  let divBoxes = $(".mainGrid div");
+  const idAttribute = "id";
+  const idValuePrefix = "value";
   const flipAnimationDuration = 350;
 
   for (divBox of divBoxes) {
@@ -124,9 +124,9 @@ const setUpEvtListeners = function() {
       }
 
       card.flip();
-      selfBox.hide('fade', null, flipAnimationDuration/2, function() {
+      selfBox.hide("fade", null, flipAnimationDuration/2, function() {
         selfBox.toggleClass(card.classNumber);
-        selfBox.show('clip', null, flipAnimationDuration/2, function() {
+        selfBox.show("clip", null, flipAnimationDuration/2, function() {
           updateGame();
           checkPair();
           if (checkWin()) {
@@ -145,13 +145,13 @@ const starRating = function() {
   };
 
   if (totalAttempts < borders.good) {
-    return '⭐⭐⭐';
+    return "⭐⭐⭐";
   }
   if (totalAttempts < borders.ok) {
-    return '⭐⭐';
+    return "⭐⭐";
   }
 
-  return '⭐';
+  return "⭐";
 }
 
 const updateGame = function() {
@@ -181,8 +181,8 @@ const checkPair = function() {
       flip.success = true;
     }
     const matchFadeColor = 800;
-    const flippedLeftElement = $('.' + flippedOverLeft);
-    flippedLeftElement.toggleClass('success' + flipped[0].classNumber, matchFadeColor);
+    const flippedLeftElement = $("." + flippedOverLeft);
+    flippedLeftElement.toggleClass("success" + flipped[0].classNumber, matchFadeColor);
   } else {
     for (flip of flipped) {
       flip.flip();
@@ -190,18 +190,18 @@ const checkPair = function() {
 
     locked = true;
     const flipBackAnimationDuration = 500;
-    const flippedElements = $('.' + flippedOverLeft + ', .' + flippedOverRight);
+    const flippedElements = $("." + flippedOverLeft + ", ." + flippedOverRight);
     flippedElements.each(function() {
       const flippedElement = $(this);
-      flippedElement.effect('shake', null, flipBackAnimationDuration * 0.4, function() {
-        flippedElement.hide('fade', null, flipBackAnimationDuration * 0.3, function() {
+      flippedElement.effect("shake", null, flipBackAnimationDuration * 0.4, function() {
+        flippedElement.hide("fade", null, flipBackAnimationDuration * 0.3, function() {
           if (flippedElement.hasClass(flippedOverLeft)) {
             flippedElement.toggleClass(flippedOverLeft);
           }
           if (flippedElement.hasClass(flippedOverRight)) {
             flippedElement.toggleClass(flippedOverRight);
           }
-          flippedElement.show('clip', null, flipBackAnimationDuration * 0.3, function() {
+          flippedElement.show("clip", null, flipBackAnimationDuration * 0.3, function() {
             if (locked) {
               locked = false;
             }
@@ -232,8 +232,8 @@ const displayWin = function() {
   const timeDelayShowPage = 2500;
 
   setTimeout(function() {
-    flexContainer.children().fadeOut('slow', function() {
-      successPage.slideDown('slow', fadeInStats);
+    flexContainer.children().fadeOut("slow", function() {
+      successPage.slideDown("slow", fadeInStats);
     });
   }, timeDelayShowPage);
 };
@@ -247,7 +247,7 @@ const fadeInStats = function() {
   const timeDiff = (endDate-startDate) / 1000;
 
   $("#neededAttempts, #neededTime, #finalStarRating, #playAgainButton").css({
-    visibility: 'visible',
+    visibility: "visible",
     opacity: 0.0
   });
 
