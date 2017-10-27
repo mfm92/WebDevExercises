@@ -12,4 +12,4 @@ No additional installations or downloads necessary. The application will run by 
 
 ## Known issues
 
-The images might not load immediately upon opening the application if using any browser other than Chrome or Safari.
+The images might not load immediately upon opening the application if using any browser other than Chrome or Firefox.
