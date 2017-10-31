@@ -159,18 +159,18 @@ const setUpEvtListeners = function() {
 *   without the incremental value at the end
 */
 const handleClick = function(idAttribute, idValuePrefix) {
+  const flipAnimationDuration = 350;
+  const selfBox = $(this);
+  const elemId = selfBox.attr(idAttribute);
+  const id = elemId.substring(idValuePrefix.length, elemId.length);
+  let card = imageOrdering[id];
+
   // Do nothing if the clicked card is either currently flipped,
   // has already been matched successfully
   if (card.flipped || card.success || locked) {
     return;
   }
   updateGame();
-
-  const flipAnimationDuration = 350;
-  const selfBox = $(this);
-  const elemId = selfBox.attr(idAttribute);
-  const id = elemId.substring(idValuePrefix.length, elemId.length);
-  let card = imageOrdering[id];
 
   if (firstClick) {
     firstClick = false;
@@ -232,7 +232,6 @@ const updateGame = function() {
   totalAttempts++;
   const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
-  card.flip();
 };
 
 /**
