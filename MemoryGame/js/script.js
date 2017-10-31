@@ -2,6 +2,8 @@ let secondTryImpending = false;
 let totalAttempts = 0;
 let imageOrdering = [];
 let clock;
+let locked = false;
+let firstClick = true;
 
 /**
 * Adding shuffle functionality to Array.prototype
@@ -46,6 +48,8 @@ const restart = function() {
   totalAttempts = 0;
   secondTryImpending = false;
   imageOrdering = [];
+  locked = false;
+  firstClick = true;
 
   // reset star rating
   const attemptsParagraph = $("#starRating");
@@ -94,8 +98,11 @@ const setUpClock = function() {
     autoStart: false,
     clockFace: "MinuteCounter"
   });
+};
+
+const startClock = function() {
   clock.start();
-}
+};
 
 /**
 * @description Set up all necessary event listeners on the buttons.
@@ -158,17 +165,21 @@ const handleClick = function(idAttribute, idValuePrefix) {
   const id = elemId.substring(idValuePrefix.length, elemId.length);
   let card = imageOrdering[id];
 
+  if (firstClick) {
+    firstClick = false;
+    startClock();
+  }
+
   // Do nothing if the clicked card is either currently flipped,
   // has already been matched successfully
-  if (card.flipped || card.success) {
+  if (card.flipped || card.success || locked) {
     return;
   }
 
-  card.flip();
+  updateGame(card);
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
     selfBox.toggleClass(card.classNumber);
     selfBox.show("clip", null, flipAnimationDuration/2, function() {
-      updateGame();
       if (!secondTryImpending) {
         animateCheck();
         if (checkWin()) {
@@ -199,14 +210,26 @@ const starRating = function() {
   return "⭐";
 }
 
+const lock = function() {
+  if (!secondTryImpending) {
+    locked = true;
+  }
+};
+
+const unlock = function() {
+  locked = false;
+};
+
 /**
 * @description Update global variables, star rating
 */
-const updateGame = function() {
+const updateGame = function(card) {
   totalAttempts++;
-  secondTryImpending = !secondTryImpending;
   const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
+  secondTryImpending = !secondTryImpending;
+  lock();
+  card.flip();
 };
 
 /**
@@ -254,6 +277,7 @@ const flipBackNonMatching = function(flipped) {
   for (flip of flipped) {
     flip.flip();
   }
+
   const flippedOverLeft = flipped[0].classNumber;
   const flippedOverRight = flipped[1].classNumber;
   const flipBackAnimationDuration = 700;
@@ -271,7 +295,9 @@ const flipBackNonMatching = function(flipped) {
           if (flippedElement.hasClass(flippedOverRight)) {
             flippedElement.toggleClass(flippedOverRight);
           }
-          flippedElement.show("clip", null, flipBackAnimationDuration * 0.3, undefined);
+          flippedElement.show("clip", null, flipBackAnimationDuration * 0.3, function() {
+            unlock();
+          });
         });
       }, showMismatchDuration);
     });
@@ -285,6 +311,7 @@ const animateCheck = function() {
   let flipped = retrieveFlippedCards();
 
   if (checkMatch(flipped)) {
+    unlock();
     displayMatch(flipped);
   } else {
     flipBackNonMatching(flipped);
