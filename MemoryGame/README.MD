@@ -6,6 +6,8 @@ This is a single-page application which models the memory game. The user clicks 
 Open this link:
 `https://rawgit.com/mfm92/WebDevExercises/master/MemoryGame/index.html`
 
+You start the game by clicking on one of the 16 displayed gray boxes for the first time.
+
 ## Dependencies
 
 No additional installations or downloads necessary. The application will run by opening the link above.
