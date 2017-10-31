@@ -2,7 +2,6 @@ let totalAttempts = 0;
 let imageOrdering = [];
 let clock;
 let flipGoingOn = false;
-let firstClick = true;
 
 /**
 * Adding shuffle functionality to Array.prototype
@@ -47,7 +46,6 @@ const restart = function() {
   totalAttempts = 0;
   imageOrdering = [];
   flipGoingOn = false;
-  firstClick = true;
 
   // reset star rating
   const attemptsParagraph = $("#starRating");
@@ -169,15 +167,12 @@ const handleClick = function(idAttribute, idValuePrefix) {
     flipBackNonMatching(retrieveFlippedCards());
   }
   card.flip();
+
+  // locking happens in here
+  // no other card can be revealed until the lock is lifted
   updateGame();
 
-  if (firstClick) {
-    firstClick = false;
-    startClock();
-  }
-
   const flipped = retrieveFlippedCards();
-  console.log(flipped.length + " <--- size");
   const successMatch = checkMatch(flipped);
 
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
@@ -193,6 +188,13 @@ const handleClick = function(idAttribute, idValuePrefix) {
   });
 };
 
+/**
+* @description Retrieve the card object associated with a given div element.
+* @param {object} selfBox: The div element for which the associated card object is to be returned.
+* @param {object} idAttribute: "id"
+* @param {object} idValuePrefix: the value of the "id" attribute
+*   without the incremental value at the end
+*/
 const getCard = function(selfBox, idAttribute, idValuePrefix) {
   const elemId = selfBox.attr(idAttribute);
   const id = elemId.substring(idValuePrefix.length, elemId.length);
@@ -231,11 +233,14 @@ const unlock = function() {
 };
 
 /**
-* @description Update global variables, star rating
+* @description Update global variables, star rating, moves counter.
 */
 const updateGame = function() {
   totalAttempts++;
   lock();
+  if (totalAttempts === 1) {
+    startClock();
+  }
   const movesCounter = $("#movesCounter");
   const attemptsParagraph = $("#starRating");
   movesCounter.text("Moves: " + totalAttempts);
@@ -273,10 +278,11 @@ const checkMatch = function(flipped) {
 * @param {object} flipped: Array of flipped card objects
 */
 const displayMatch = function(flipped) {
-  unlock();
   flipped.forEach(flip => {
     flip.success = true;
   });
+  unlock();
+  
   const matchFadeColor = 800;
   const flippedMatchClass = flipped[0].classNumber;
   const flippedLeftElement = $("." + flippedMatchClass);
@@ -284,7 +290,8 @@ const displayMatch = function(flipped) {
 };
 
 /**
-* @description Show animations in the event of a mismatch
+* @description Shows shaking animation to indicate that no match has been achieved.
+*   Does not flip the cards yet. This only happens when the user clicks on another card.
 * @param {object} flipped: Array of flipped card objects
 */
 const shakeMismatch = function(flipped) {
@@ -295,10 +302,16 @@ const shakeMismatch = function(flipped) {
 
   flippedElements.each(function() {
     const flippedElement = $(this);
+
+    // clicking on cards will be unlocked again after the shaking animation has finished
     flippedElement.effect("shake", null, shakeDuration, () => unlock());
   });
 };
 
+/**
+* @description Flips back any revealed and non-matches card.
+* @param {object} flipped: Array of flipped card objects
+*/
 const flipBackNonMatching = function(flipped) {
   flipped.forEach(flip => {
     flip.flip();
@@ -320,6 +333,8 @@ const flipBackNonMatching = function(flipped) {
 
 /**
 * @description Check if currently exposed two cards match.
+* @param {object} flipped: Array of flipped card objects
+* @param {object} success: True iff the flipped cards constitute a match
 */
 const animateCheck = function(flipped, success) {
   if (success) {
