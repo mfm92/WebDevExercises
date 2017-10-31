@@ -2,7 +2,8 @@ let secondTryImpending = false;
 let totalAttempts = 0;
 let imageOrdering = [];
 let clock;
-let locked = false;
+let flipGoingOn = false;
+let clickLocked = false;
 let firstClick = true;
 
 /**
@@ -48,8 +49,9 @@ const restart = function() {
   totalAttempts = 0;
   secondTryImpending = false;
   imageOrdering = [];
-  locked = false;
+  flipGoingOn = false;
   firstClick = true;
+  clickLocked = false;
 
   // reset star rating
   const attemptsParagraph = $("#starRating");
@@ -159,17 +161,23 @@ const setUpEvtListeners = function() {
 *   without the incremental value at the end
 */
 const handleClick = function(idAttribute, idValuePrefix) {
+  if (clickLocked) {
+    return;
+  }
+
+  clickLocked = true;
   const flipAnimationDuration = 350;
   const selfBox = $(this);
   const elemId = selfBox.attr(idAttribute);
   const id = elemId.substring(idValuePrefix.length, elemId.length);
   let card = imageOrdering[id];
-
+  clickLocked = false;
   // Do nothing if the clicked card is either currently flipped,
   // has already been matched successfully
-  if (card.flipped || card.success || locked) {
+  if (card.flipped || card.success || flipGoingOn) {
     return;
   }
+  card.flip();
   updateGame();
 
   if (firstClick) {
@@ -177,7 +185,6 @@ const handleClick = function(idAttribute, idValuePrefix) {
     startClock();
   }
 
-  card.flip();
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
     selfBox.toggleClass(card.classNumber);
     selfBox.show("clip", null, flipAnimationDuration/2, function() {
@@ -213,12 +220,12 @@ const starRating = function() {
 
 const lock = function() {
   if (!secondTryImpending) {
-    locked = true;
+    flipGoingOn = true;
   }
 };
 
 const unlock = function() {
-  locked = false;
+  flipGoingOn = false;
 };
 
 /**
