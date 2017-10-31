@@ -14,7 +14,8 @@ No additional installations or downloads necessary. The application will run by 
 
 ## Known issues
 
-The images might not load immediately upon opening the application if using any browser other than Chrome or Firefox.
+* The images might not load immediately upon opening the application if using any browser other than Chrome or Firefox.
+* When hitting restart while a pair of cards is being colored the colors might not be reset properly.
 
 ## What are these images?!
 
