@@ -62,7 +62,7 @@ header p {
 button {
   background: linear-gradient(135deg, #22bf27 0%,#20aa7f 50%,#64c41f 51%,#d8d875 100%);
   color: white;
-  font-size: 30px;
+  font-size: 27px;
   font-weight: bold;
   height: auto;
   border: none;
@@ -211,7 +211,7 @@ button {
 
   #clock {
     flex: 0 0 100%;
-    transform: scale(0.4);
+    transform: scale(0.2);
   }
 
   .mainGrid {

@@ -161,7 +161,7 @@ const handleClick = function(idAttribute, idValuePrefix) {
 
   // Do nothing if the clicked card is either currently flipped,
   // has already been matched successfully
-  if (card.flipped || card.success /*|| flipGoingOn*/) {
+  if (card.flipped || card.success || flipGoingOn) {
     return;
   }
   card.flip();
@@ -179,6 +179,10 @@ const handleClick = function(idAttribute, idValuePrefix) {
     if (!successMatch) {
       for (flip of flipped) {
         flip.flip();
+      }
+    } else {
+      for (flip of flipped) {
+        flip.success = true;
       }
     }
   }
@@ -272,9 +276,6 @@ const checkMatch = function(flipped) {
 * @param {object} flipped: Array of flipped card objects
 */
 const displayMatch = function(flipped) {
-  for (flip of flipped) {
-    flip.success = true;
-  }
   unlock();
   const matchFadeColor = 800;
   const flippedMatchClass = flipped[0].classNumber;
