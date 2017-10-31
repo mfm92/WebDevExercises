@@ -159,6 +159,13 @@ const setUpEvtListeners = function() {
 *   without the incremental value at the end
 */
 const handleClick = function(idAttribute, idValuePrefix) {
+  // Do nothing if the clicked card is either currently flipped,
+  // has already been matched successfully
+  if (card.flipped || card.success || locked) {
+    return;
+  }
+  updateGame();
+
   const flipAnimationDuration = 350;
   const selfBox = $(this);
   const elemId = selfBox.attr(idAttribute);
@@ -170,13 +177,7 @@ const handleClick = function(idAttribute, idValuePrefix) {
     startClock();
   }
 
-  // Do nothing if the clicked card is either currently flipped,
-  // has already been matched successfully
-  if (card.flipped || card.success || locked) {
-    return;
-  }
-
-  updateGame(card);
+  card.flip();
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
     selfBox.toggleClass(card.classNumber);
     selfBox.show("clip", null, flipAnimationDuration/2, function() {
@@ -223,12 +224,14 @@ const unlock = function() {
 /**
 * @description Update global variables, star rating
 */
-const updateGame = function(card) {
+const updateGame = function() {
+  secondTryImpending = !secondTryImpending;
+  if (!secondTryImpending) {
+    lock();
+  }
   totalAttempts++;
   const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
-  secondTryImpending = !secondTryImpending;
-  lock();
   card.flip();
 };
 
@@ -263,6 +266,7 @@ const displayMatch = function(flipped) {
   for (flip of flipped) {
     flip.success = true;
   }
+  unlock();
   const matchFadeColor = 800;
   const flippedMatchClass = flipped[0].classNumber;
   const flippedLeftElement = $("." + flippedMatchClass);
@@ -311,7 +315,6 @@ const animateCheck = function() {
   let flipped = retrieveFlippedCards();
 
   if (checkMatch(flipped)) {
-    unlock();
     displayMatch(flipped);
   } else {
     flipBackNonMatching(flipped);
