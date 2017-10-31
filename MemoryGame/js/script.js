@@ -1,4 +1,3 @@
-let secondTryImpending = false;
 let totalAttempts = 0;
 let imageOrdering = [];
 let clock;
@@ -46,7 +45,6 @@ $(document).ready(function() {
 const restart = function() {
   // reset global values
   totalAttempts = 0;
-  secondTryImpending = false;
   imageOrdering = [];
   flipGoingOn = false;
   firstClick = true;
@@ -127,7 +125,7 @@ const setUpImageOrdering = function() {
     }
   }
 
-  imageOrdering.shuffle();
+  //imageOrdering.shuffle();
 };
 
 /**
@@ -155,9 +153,8 @@ const setUpEvtListeners = function() {
 const handleClick = function(idAttribute, idValuePrefix) {
   const flipAnimationDuration = 350;
   const selfBox = $(this);
-  const elemId = selfBox.attr(idAttribute);
-  const id = elemId.substring(idValuePrefix.length, elemId.length);
-  let card = imageOrdering[id];
+  const card = getCard(selfBox, idAttribute, idValuePrefix);
+  const secondTryImpending = totalAttempts%2 === 0;
 
   // Do nothing if the clicked card is either currently flipped,
   // has already been matched successfully
@@ -173,19 +170,8 @@ const handleClick = function(idAttribute, idValuePrefix) {
   }
 
   const flipped = retrieveFlippedCards();
+  console.log(flipped.length);
   const successMatch = checkMatch(flipped);
-
-  if (!secondTryImpending) {
-    if (!successMatch) {
-      for (flip of flipped) {
-        flip.flip();
-      }
-    } else {
-      for (flip of flipped) {
-        flip.success = true;
-      }
-    }
-  }
 
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
     selfBox.toggleClass(card.classNumber);
@@ -198,6 +184,13 @@ const handleClick = function(idAttribute, idValuePrefix) {
       }
     });
   });
+};
+
+const getCard = function(selfBox, idAttribute, idValuePrefix) {
+  const elemId = selfBox.attr(idAttribute);
+  const id = elemId.substring(idValuePrefix.length, elemId.length);
+  let card = imageOrdering[id];
+  return card;
 };
 
 /**
@@ -221,7 +214,7 @@ const starRating = function() {
 };
 
 const lock = function() {
-  if (!secondTryImpending) {
+  if (!totalAttempts%2===1) {
     flipGoingOn = true;
   }
 };
@@ -234,11 +227,8 @@ const unlock = function() {
 * @description Update global variables, star rating
 */
 const updateGame = function() {
-  secondTryImpending = !secondTryImpending;
-  if (!secondTryImpending) {
-    lock();
-  }
   totalAttempts++;
+  lock();
   const movesCounter = $("#movesCounter");
   const attemptsParagraph = $("#starRating");
   movesCounter.text("Moves: " + totalAttempts);
@@ -277,6 +267,9 @@ const checkMatch = function(flipped) {
 */
 const displayMatch = function(flipped) {
   unlock();
+  flipped.forEach(flip => {
+    flip.success = true;
+  });
   const matchFadeColor = 800;
   const flippedMatchClass = flipped[0].classNumber;
   const flippedLeftElement = $("." + flippedMatchClass);
@@ -288,9 +281,10 @@ const displayMatch = function(flipped) {
 * @param {object} flipped: Array of flipped card objects
 */
 const flipBackNonMatching = function(flipped) {
+  flipped.forEach(flip => flip.flip());
   const flippedOverLeft = flipped.length > 0 ? flipped[0].classNumber : "null";
   const flippedOverRight = flipped.length > 1 ? flipped[1].classNumber : "null";
-  const flipBackAnimationDuration = 700;
+  const flipBackAnimationDuration = 400;
   const showMismatchDuration = 100;
   const flippedElements = $("." + flippedOverLeft + ", ." + flippedOverRight);
 
