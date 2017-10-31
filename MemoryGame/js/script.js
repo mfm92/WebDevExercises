@@ -175,6 +175,14 @@ const handleClick = function(idAttribute, idValuePrefix) {
   const flipped = retrieveFlippedCards();
   const successMatch = checkMatch(flipped);
 
+  if (!secondTryImpending) {
+    if (!successMatch) {
+      for (flip of flipped) {
+        flip.flip();
+      }
+    }
+  }
+
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
     selfBox.toggleClass(card.classNumber);
     selfBox.show("clip", null, flipAnimationDuration/2, function() {
@@ -279,10 +287,6 @@ const displayMatch = function(flipped) {
 * @param {object} flipped: Array of flipped card objects
 */
 const flipBackNonMatching = function(flipped) {
-  for (flip of flipped) {
-    flip.flip();
-  }
-
   const flippedOverLeft = flipped.length > 0 ? flipped[0].classNumber : "null";
   const flippedOverRight = flipped.length > 1 ? flipped[1].classNumber : "null";
   const flipBackAnimationDuration = 700;
