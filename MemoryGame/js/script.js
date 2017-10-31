@@ -170,7 +170,6 @@ const handleClick = function(idAttribute, idValuePrefix) {
   }
 
   const flipped = retrieveFlippedCards();
-  console.log(flipped.length);
   const successMatch = checkMatch(flipped);
 
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
@@ -199,8 +198,8 @@ const getCard = function(selfBox, idAttribute, idValuePrefix) {
 const starRating = function() {
   // star rating depends on number of clicks performed thus far.
   const borders = {
-    good: 26,
-    ok: 41,
+    good: 28,
+    ok: 43,
   };
 
   if (totalAttempts < borders.good) {
@@ -214,7 +213,7 @@ const starRating = function() {
 };
 
 const lock = function() {
-  if (!totalAttempts%2===1) {
+  if (totalAttempts%2!==1) {
     flipGoingOn = true;
   }
 };
@@ -284,7 +283,7 @@ const flipBackNonMatching = function(flipped) {
   flipped.forEach(flip => flip.flip());
   const flippedOverLeft = flipped.length > 0 ? flipped[0].classNumber : "null";
   const flippedOverRight = flipped.length > 1 ? flipped[1].classNumber : "null";
-  const flipBackAnimationDuration = 400;
+  const flipBackAnimationDuration = 600;
   const showMismatchDuration = 100;
   const flippedElements = $("." + flippedOverLeft + ", ." + flippedOverRight);
 
