@@ -53,18 +53,21 @@ const restart = function() {
   const attemptsParagraph = $("#starRating");
   attemptsParagraph.text(starRating());
 
-  // hide all previously revealed images
-  let divBoxes = $(".mainGrid div");
-  for (divBox of divBoxes) {
-    const box = $(divBox);
-    box.attr("class", "");
-  }
+  const movesCounter = $("#movesCounter");
+  movesCounter.text("Moves: 0");
 
   // re-shuffle cards
   setUpImageOrdering();
 
   // re-start timer
   setUpClock();
+
+  let divBoxes = $(".mainGrid div");
+  for (divBox of divBoxes) {
+    const box = $(divBox);
+    box.removeAttr("class");
+    box.removeAttr("style");
+  };
 };
 
 /**
@@ -161,6 +164,10 @@ const handleClick = function(idAttribute, idValuePrefix) {
   if (card.flipped || card.success || flipGoingOn) {
     return;
   }
+
+  if (secondTryImpending) {
+    shakeMismatch(retrieveFlippedCards());
+  }
   card.flip();
   updateGame();
 
@@ -170,6 +177,7 @@ const handleClick = function(idAttribute, idValuePrefix) {
   }
 
   const flipped = retrieveFlippedCards();
+  console.log(flipped.length + " <--- size");
   const successMatch = checkMatch(flipped);
 
   selfBox.hide("fade", null, flipAnimationDuration/2, function() {
@@ -280,29 +288,32 @@ const displayMatch = function(flipped) {
 * @param {object} flipped: Array of flipped card objects
 */
 const flipBackNonMatching = function(flipped) {
-  flipped.forEach(flip => flip.flip());
-  const flippedOverLeft = flipped.length > 0 ? flipped[0].classNumber : "null";
-  const flippedOverRight = flipped.length > 1 ? flipped[1].classNumber : "null";
-  const flipBackAnimationDuration = 600;
-  const showMismatchDuration = 100;
+  const flippedOverLeft = flipped.length > 0 ? flipped[0].classNumber : "null1";
+  const flippedOverRight = flipped.length > 1 ? flipped[1].classNumber : "null2";
+  const shakeDuration = 200;
   const flippedElements = $("." + flippedOverLeft + ", ." + flippedOverRight);
 
   flippedElements.each(function() {
     const flippedElement = $(this);
-    flippedElement.effect("shake", null, flipBackAnimationDuration * 0.4, function() {
-      setTimeout(function() {
-        flippedElement.hide("fade", null, flipBackAnimationDuration * 0.3, function() {
-          if (flippedElement.hasClass(flippedOverLeft)) {
-            flippedElement.toggleClass(flippedOverLeft);
-          }
-          if (flippedElement.hasClass(flippedOverRight)) {
-            flippedElement.toggleClass(flippedOverRight);
-          }
-          flippedElement.show("clip", null, flipBackAnimationDuration * 0.3, function() {
-            unlock();
-          });
-        });
-      }, showMismatchDuration);
+    flippedElement.effect("shake", null, shakeDuration, () => unlock());
+  });
+};
+
+const shakeMismatch = function(flipped) {
+  flipped.forEach(flip => {
+    flip.flip();
+  });
+  const flippedClasses = [];
+  const flipBackAnimationDuration = 600;
+  flippedClasses.push(flipped.length > 0 ? flipped[0].classNumber : "null1");
+  flippedClasses.push(flipped.length > 1 ? flipped[1].classNumber : "null2");
+
+  flippedClasses.forEach(function(flippedClass) {
+    console.log("Flippy class: " + flippedClass);
+    const flippedElement = $("." + flippedClass);
+    flippedElement.hide("fade", null, flipBackAnimationDuration * 0.5, function() {
+      flippedElement.toggleClass(flippedClass);
+      flippedElement.show("clip", null, flipBackAnimationDuration * 0.5, undefined);
     });
   });
 };
