@@ -128,7 +128,7 @@ const setUpImageOrdering = function() {
     }
   }
 
-  //imageOrdering.shuffle();
+  imageOrdering.shuffle();
 };
 
 /**
@@ -166,7 +166,7 @@ const handleClick = function(idAttribute, idValuePrefix) {
   }
 
   if (secondTryImpending) {
-    shakeMismatch(retrieveFlippedCards());
+    flipBackNonMatching(retrieveFlippedCards());
   }
   card.flip();
   updateGame();
@@ -287,7 +287,7 @@ const displayMatch = function(flipped) {
 * @description Show animations in the event of a mismatch
 * @param {object} flipped: Array of flipped card objects
 */
-const flipBackNonMatching = function(flipped) {
+const shakeMismatch = function(flipped) {
   const flippedOverLeft = flipped.length > 0 ? flipped[0].classNumber : "null1";
   const flippedOverRight = flipped.length > 1 ? flipped[1].classNumber : "null2";
   const shakeDuration = 200;
@@ -299,17 +299,17 @@ const flipBackNonMatching = function(flipped) {
   });
 };
 
-const shakeMismatch = function(flipped) {
+const flipBackNonMatching = function(flipped) {
   flipped.forEach(flip => {
     flip.flip();
   });
+
   const flippedClasses = [];
   const flipBackAnimationDuration = 600;
   flippedClasses.push(flipped.length > 0 ? flipped[0].classNumber : "null1");
   flippedClasses.push(flipped.length > 1 ? flipped[1].classNumber : "null2");
 
   flippedClasses.forEach(function(flippedClass) {
-    console.log("Flippy class: " + flippedClass);
     const flippedElement = $("." + flippedClass);
     flippedElement.hide("fade", null, flipBackAnimationDuration * 0.5, function() {
       flippedElement.toggleClass(flippedClass);
@@ -325,7 +325,7 @@ const animateCheck = function(flipped, success) {
   if (success) {
     displayMatch(flipped);
   } else {
-    flipBackNonMatching(flipped);
+    shakeMismatch(flipped);
   }
 };
 
