@@ -243,8 +243,12 @@ const updateGame = function() {
   }
   const movesCounter = $("#movesCounter");
   const attemptsParagraph = $("#starRating");
-  movesCounter.text("Moves: " + totalAttempts);
+  movesCounter.text("Moves: " + getMovesCount());
   attemptsParagraph.text(starRating());
+};
+
+const getMovesCount = function() {
+  return Math.floor(totalAttempts/2);
 };
 
 /**
@@ -282,7 +286,7 @@ const displayMatch = function(flipped) {
     flip.success = true;
   });
   unlock();
-  
+
   const matchFadeColor = 800;
   const flippedMatchClass = flipped[0].classNumber;
   const flippedLeftElement = $("." + flippedMatchClass);
@@ -392,7 +396,7 @@ const fadeInStats = function() {
     opacity: 0.0
   });
 
-  neededAttempts.text(totalAttempts);
+  neededAttempts.text(getMovesCount());
   neededTime.text(clock.getTime());
   finalStarRating.text(starRating());
 
