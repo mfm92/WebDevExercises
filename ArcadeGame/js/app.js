@@ -8,16 +8,26 @@ const START_LIVES = 3;
 
 const CELL_ROWS = 6;
 const CELL_COLUMNS = 5;
-let factor = 1;
+let collisionLock = false;
+let rounds = 1;
+let factorMin = 1, factorMax = 1;
 const pointsBonusSurvival = 100;
+let timeNewRound = new Date();
 
 const checkCollisions = function() {
+  if (collisionLock) {
+    return;
+  }
   allEnemies.forEach(function(enemy) {
     if (doCheckCollision(player, enemy)) {
-      player.reset();
-      player.lives--;
-      updateLives.call(player);
-      handleFail.call(player);
+      collisionLock = true;
+      setTimeout(function() {
+        player.reset();
+        player.lives--;
+        updateLives.call(player);
+        handleFail.call(player);
+        collisionLock = false;
+      }, 1000);
     }
   });
   allGems.forEach(function(gem) {
@@ -38,7 +48,12 @@ const checkCollisions = function() {
 const updateLives = function() {
   const livesText = $("#livesNr");
   livesText.text(this.lives);
-}
+};
+
+const updateRounds = function() {
+  const roundsText = $("#rounds");
+  roundsText.text(++rounds);
+};
 
 const doCheckCollision = function(obj1, obj2) {
   return Math.abs(obj1.x - obj2.x) < WIDTH_OF_CELL/2 && Math.abs(obj1.y - obj2.y) < WIDTH_OF_CELL/2;
@@ -49,6 +64,8 @@ const handleFail = function() {
     return;
   }
   $("canvas").remove();
+  $("#finalText").text("Game over :(");
+  $("#finalText").css({display: 'block'});
 };
 
 const handleWin = function() {
@@ -57,10 +74,20 @@ const handleWin = function() {
 
   if (heightPlayer < winHeight) {
     player.reset();
-    player.points += (pointsBonusSurvival*factor*allEnemies.length);
-    factor *= 1.23;
+    player.points += (pointsBonusSurvival*factorMin*allEnemies.length);
+    factorMin *= 1.14;
+    factorMax *= 1.24;
+    placeRocksRandomly();
     placeGemsRandomly();
     placeEnemiesRandomly();
+    updateRounds();
+  }
+};
+
+const penaltiesForTime = function() {
+  const timeDiff = new Date() - timeNewRound;
+  if (timeDiff > 3000 && timeDiff % 600 === 0) {
+    player.points = Math.max(0, player.points-(7*factorMin));
   }
 };
 
@@ -72,18 +99,28 @@ const placeGemsRandomly = function() {
 
   allGems = [];
 
-  if (randomNumberBetween(1, 100) < 30) {
-    allGems.push(new Gem(blueGem, 20*factor, false));
+  if (randomNumberBetween(1, 100) < 40) {
+    allGems.push(new Gem(blueGem, 20*factorMin, false));
   }
-  if (randomNumberBetween(1, 100) < 15) {
-    allGems.push(new Gem(greenGem, 50*factor, false));
+  if (randomNumberBetween(1, 100) < 25) {
+    allGems.push(new Gem(greenGem, 50*factorMin, false));
   }
-  if (randomNumberBetween(1, 100) < 7) {
-    allGems.push(new Gem(lifeGem, 50*factor, true));
+  if (randomNumberBetween(1, 100) < (5+rounds*2)) {
+    allGems.push(new Gem(lifeGem, 50*factorMin, true));
   }
-  if (randomNumberBetween(1, 100) < 3) {
-    allGems.push(new Gem(orangeGem, 100*factor, false));
+  if (randomNumberBetween(1, 100) < 10) {
+    allGems.push(new Gem(orangeGem, 100*factorMin, false));
   }
+};
+
+const isThereRock = function(x, y) {
+  for (rock of allRocks) {
+    if (rock.x === x && rock.y === y) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const placeEnemiesRandomly = function() {
@@ -91,16 +128,59 @@ const placeEnemiesRandomly = function() {
   const rndNr = randomNumberBetween(1, 100);
   let pushCount = 0;
 
-  if (rndNr < 30) {
+  if (rndNr < 20) {
     pushCount = 1;
-  } else if (rndNr < 90) {
+  } else if (rndNr < 50) {
     pushCount = 2;
-  } else {
+  } else if (rndNr < 95) {
     pushCount = 3;
+  } else {
+    pushCount = 4;
   }
 
   for (let i = 0; i < pushCount; i++) {
-    allEnemies.push(new Enemy());
+    allEnemies.push(new Enemy(randomNumberBetween(100*factorMin, 100*factorMax)/100));
+  }
+};
+
+const placeRocksRandomly = function() {
+  for (rock of allRocks) {
+    rock.x = undefined;
+    rock.y = undefined;
+  }
+
+  allRocks = [];
+  if (rounds > 1) {
+    const rndNr = randomNumberBetween(1, 100);
+    let pushCount = 0;
+
+    if (rndNr < 50) {
+      pushCount = 1;
+    } else if (rndNr < 55) {
+      pushCount = 2;
+    } else if (rndNr < 70) {
+      pushCount = 3;
+    } else if (rndNr < 75) {
+      pushCount = 4;
+    } else if (rndNr < 90) {
+      pushCount = 6;
+    } else {
+      pushCount = 8;
+    }
+
+    if (pushCount < 5) {
+      for (let i = 0; i < pushCount; i++) {
+        allRocks.push(new Rock(randomNumberBetween(0, 5), randomNumberBetween(1, 4)));
+      }
+    } else {
+      for (let i = 0; i < pushCount/2; i++) {
+        const x = randomNumberBetween(0, 5);
+        const y = randomNumberBetween(1, 3);
+        for (let j = 0; j < 2; j++) {
+          allRocks.push(new Rock(x, j+y));
+        }
+      }
+    }
   }
 };
 
@@ -111,16 +191,28 @@ var Gem = function(sprite, points, life) {
 
   this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
   this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
+
+  while (isThereRock(this.x, this.y)) {
+    this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
+    this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
+  }
 };
 
+var Rock = function(x, y) {
+  this.sprite = 'images/Rock.png';
+  this.x = x * WIDTH_OF_CELL;
+  this.y = y * HEIGHT_OF_CELL;
+}
+
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(factor) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.factor = factor;
 
     this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
     this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
@@ -132,7 +224,10 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x = (this.x + WIDTH_OF_CELL*(dt*factor)) % (WIDTH_OF_CELL * CELL_COLUMNS);
+    if (collisionLock) {
+      return;
+    }
+    this.x = (this.x + WIDTH_OF_CELL*(dt*this.factor)) % (WIDTH_OF_CELL * CELL_COLUMNS);
 };
 
 // Draw the enemy on the screen, required method for game
@@ -152,6 +247,7 @@ var Player = function() {
 };
 
 Player.prototype.reset = function() {
+  timeNewRound = new Date();
   resetPlayer.call(this);
 };
 
@@ -166,6 +262,10 @@ const drawSprite = function() {
 
 Player.prototype.handleInput = function(keyCode) {
   let newX, newY;
+
+  if (collisionLock) {
+    return;
+  }
 
   switch(keyCode) {
     case 'left': {
@@ -206,6 +306,9 @@ Player.prototype.handleInput = function(keyCode) {
       }
       newY = this.y + HEIGHT_OF_CELL;
       newX = this.x;
+      if (!isThereRock(newX, newY)) {
+        this.points = Math.max(0, this.points-(25*factorMax)); // penalty for moving down!
+      }
       break;
     }
     default: {
@@ -215,13 +318,19 @@ Player.prototype.handleInput = function(keyCode) {
     };
   }
 
-  this.x = newX;
-  this.y = newY;
+  if (!isThereRock(newX, newY)) {
+    this.x = newX;
+    this.y = newY;
+  }
 };
 
 Player.prototype.update = function() {
+  if (collisionLock) {
+    return;
+  }
   handleWin();
-  updatePts.call(this)
+  updatePts.call(this);
+  penaltiesForTime();
 };
 
 const updatePts = function() {
@@ -235,14 +344,18 @@ Player.prototype.render = function() {
   for (gem of allGems) {
     drawSprite.call(gem);
   }
+  for (rock of allRocks) {
+    drawSprite.call(rock);
+  }
 };
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var player = new Player(),
-  allEnemies = [new Enemy()],
-  allGems = [];
+  allEnemies = [new Enemy(factorMin)],
+  allGems = [],
+  allRocks = [];
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
