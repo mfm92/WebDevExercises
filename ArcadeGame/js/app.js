@@ -4,18 +4,113 @@ const randomNumberBetween = function(start, end) {
 
 const WIDTH_OF_CELL = 101;
 const HEIGHT_OF_CELL = 83;
+const START_LIVES = 3;
 
 const CELL_ROWS = 6;
 const CELL_COLUMNS = 5;
+let factor = 1;
+const pointsBonusSurvival = 100;
 
 const checkCollisions = function() {
-  let collision = false;
   allEnemies.forEach(function(enemy) {
-    if (Math.abs(player.x - enemy.x) < 1 && Math.abs(player.y - enemy.y) < 1) {
-      collision = true;
+    if (doCheckCollision(player, enemy)) {
       player.reset();
+      player.lives--;
+      updateLives.call(player);
+      handleFail.call(player);
     }
   });
+  allGems.forEach(function(gem) {
+    if (doCheckCollision(player, gem)) {
+      player.points += gem.points;
+
+      if (gem.life) {
+        player.lives++;
+        updateLives.call(player);
+      }
+
+      gem.x = undefined;
+      gem.y = undefined;
+    }
+  });
+};
+
+const updateLives = function() {
+  const livesText = $("#livesNr");
+  livesText.text(this.lives);
+}
+
+const doCheckCollision = function(obj1, obj2) {
+  return Math.abs(obj1.x - obj2.x) < WIDTH_OF_CELL/2 && Math.abs(obj1.y - obj2.y) < WIDTH_OF_CELL/2;
+};
+
+const handleFail = function() {
+  if (this.lives > 0) {
+    return;
+  }
+  $("canvas").remove();
+};
+
+const handleWin = function() {
+  const heightPlayer = player.y;
+  const winHeight = 23;
+
+  if (heightPlayer < winHeight) {
+    player.reset();
+    player.points += (pointsBonusSurvival*factor*allEnemies.length);
+    factor *= 1.23;
+    placeGemsRandomly();
+    placeEnemiesRandomly();
+  }
+};
+
+const placeGemsRandomly = function() {
+  const blueGem = 'images/Gem Blue.png';
+  const greenGem = 'images/Gem Green.png';
+  const orangeGem = 'images/Gem Orange.png';
+  const lifeGem = 'images/Heart.png';
+
+  allGems = [];
+
+  if (randomNumberBetween(1, 100) < 30) {
+    allGems.push(new Gem(blueGem, 20*factor, false));
+  }
+  if (randomNumberBetween(1, 100) < 15) {
+    allGems.push(new Gem(greenGem, 50*factor, false));
+  }
+  if (randomNumberBetween(1, 100) < 7) {
+    allGems.push(new Gem(lifeGem, 50*factor, true));
+  }
+  if (randomNumberBetween(1, 100) < 3) {
+    allGems.push(new Gem(orangeGem, 100*factor, false));
+  }
+};
+
+const placeEnemiesRandomly = function() {
+  allEnemies = [];
+  const rndNr = randomNumberBetween(1, 100);
+  let pushCount = 0;
+
+  if (rndNr < 30) {
+    pushCount = 1;
+  } else if (rndNr < 90) {
+    pushCount = 2;
+  } else {
+    pushCount = 3;
+  }
+
+  for (let i = 0; i < pushCount; i++) {
+    allEnemies.push(new Enemy());
+  }
+};
+
+var Gem = function(sprite, points, life) {
+  this.sprite = sprite;
+  this.points = points;
+  this.life = life;
+
+  this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
+  this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
 };
 
 // Enemies our player must avoid
@@ -37,12 +132,12 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x = (this.x + WIDTH_OF_CELL*dt) % (WIDTH_OF_CELL * CELL_COLUMNS);
+    this.x = (this.x + WIDTH_OF_CELL*(dt*factor)) % (WIDTH_OF_CELL * CELL_COLUMNS);
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  drawSprite.call(this);
 };
 
 // Now write your own player class
@@ -50,6 +145,9 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
   this.sprite = 'images/char-boy.png';
+  this.lives = START_LIVES;
+  this.points = 0;
+
   resetPlayer.call(this);
 };
 
@@ -62,27 +160,51 @@ const resetPlayer = function() {
   this.y = 5 * HEIGHT_OF_CELL;
 };
 
+const drawSprite = function() {
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
 Player.prototype.handleInput = function(keyCode) {
   let newX, newY;
 
   switch(keyCode) {
     case 'left': {
-      newX = (this.x - WIDTH_OF_CELL) % (WIDTH_OF_CELL * CELL_COLUMNS);
+      if (this.x - WIDTH_OF_CELL < 0) {
+        newX = this.x;
+        newY = this.y;
+        break;
+      }
+      newX = this.x - WIDTH_OF_CELL;
       newY = this.y;
       break;
     }
     case 'right': {
-      newX = (this.x + WIDTH_OF_CELL) % (WIDTH_OF_CELL * CELL_COLUMNS);
+      if (this.x + WIDTH_OF_CELL >= WIDTH_OF_CELL * CELL_COLUMNS) {
+        newX = this.x;
+        newY = this.y;
+        break;
+      }
+      newX = this.x + WIDTH_OF_CELL;
       newY = this.y;
       break;
     }
     case 'up': {
-      newY = (this.y - HEIGHT_OF_CELL) % (HEIGHT_OF_CELL * CELL_ROWS);
+      if (this.y - HEIGHT_OF_CELL < 0) {
+        newX = this.x;
+        newY = this.y;
+        break;
+      }
+      newY = this.y - HEIGHT_OF_CELL;
       newX = this.x;
       break;
     }
     case 'down': {
-      newY = (this.y + HEIGHT_OF_CELL) % (HEIGHT_OF_CELL * CELL_ROWS);
+      if (this.y + HEIGHT_OF_CELL >= HEIGHT_OF_CELL * CELL_ROWS) {
+        newX = this.x;
+        newY = this.y;
+        break;
+      }
+      newY = this.y + HEIGHT_OF_CELL;
       newX = this.x;
       break;
     }
@@ -98,18 +220,29 @@ Player.prototype.handleInput = function(keyCode) {
 };
 
 Player.prototype.update = function() {
-  //this.y = (this.y + HEIGHT_OF_CELL) % (HEIGHT_OF_CELL * CELL_ROWS);
+  handleWin();
+  updatePts.call(this)
 };
 
+const updatePts = function() {
+  const pointsText = $("#points");
+  pointsText.text(Math.round(this.points));
+}
+
 Player.prototype.render = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  drawSprite.call(this);
+
+  for (gem of allGems) {
+    drawSprite.call(gem);
+  }
 };
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var player = new Player(),
-  allEnemies = [new Enemy()];
+  allEnemies = [new Enemy()],
+  allGems = [];
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
