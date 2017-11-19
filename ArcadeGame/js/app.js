@@ -1,19 +1,42 @@
-const randomNumberBetween = function(start, end) {
-  return Math.floor((end-start) * Math.random() + start);
-};
-
 const WIDTH_OF_CELL = 101;
 const HEIGHT_OF_CELL = 83;
 const START_LIVES = 3;
-
 const CELL_ROWS = 6;
 const CELL_COLUMNS = 5;
+
 let collisionLock = false;
 let rounds = 1;
 let factorMin = 1, factorMax = 1;
 const pointsBonusSurvival = 100;
 let timeNewRound = new Date();
 
+/**
+ * Return random number in specified range.
+ *
+ * @param {start} start Lower border of the range.
+ * @param {end} end Upper border of the range.
+ * @return See above.
+ */
+const randomNumberBetween = function(start, end) {
+  return Math.floor((end-start) * Math.random() + start);
+};
+
+/**
+ * Logic to calculate whether two objects collided.
+ * @param {obj1} obj1 Object 1
+ * @param {obj2} obj2 Object 2
+ */
+const doCheckCollision = function(obj1, obj2) {
+  return Math.abs(obj1.x - obj2.x) < WIDTH_OF_CELL/2 && Math.abs(obj1.y - obj2.y) < WIDTH_OF_CELL/2;
+};
+
+/**
+ * Check if the player collides with an enemy or successfully picked
+ * up a gem. If he collided with an enemy reset the player and deduct
+ * 1 from the life count.
+ * Also check if the player ran out of lives and end the game if so.
+ * If a gem was picked up, add a number of points and display a text.
+ */
 const checkCollisions = function() {
   if (collisionLock) {
     return;
@@ -50,20 +73,36 @@ const checkCollisions = function() {
   });
 };
 
+/**
+ * Show the updated number of player lives in the UI.
+ */
 const updateLives = function() {
   const livesText = $("#livesNr");
   livesText.text(this.lives);
 };
 
+/**
+ * Show the updated number of rounds that the player
+ * survived in the UI.
+ */
 const updateRounds = function() {
   const roundsText = $("#rounds");
   roundsText.text(++rounds);
 };
 
-const doCheckCollision = function(obj1, obj2) {
-  return Math.abs(obj1.x - obj2.x) < WIDTH_OF_CELL/2 && Math.abs(obj1.y - obj2.y) < WIDTH_OF_CELL/2;
-};
+/**
+ * Show the updated number of points that the player
+ * collected in the UI.
+ */
+const updatePts = function() {
+  const pointsText = $("#points");
+  pointsText.text(Math.round(this.points));
+}
 
+/**
+ * Display a "Game Over" message to the UI if the player
+ * ran out of lives.
+ */
 const handleFail = function() {
   if (this.lives > 0) {
     return;
@@ -73,7 +112,15 @@ const handleFail = function() {
   $("#finalText").css({display: 'block'});
 };
 
-const handleWin = function() {
+/**
+ * Carry out all necessary updates if the player makes it to the
+ * safe shore.
+ * - Update speed of enemies for the next round
+ * - Add an amount of points as reward for making it to the safe side,
+ *   which depends on the number of enemies in that round and their speed
+ * - Add rocks and gems randomly for the next round.
+ */
+const handleRoundOver = function() {
   const heightPlayer = player.y;
   const winHeight = 23;
 
@@ -90,7 +137,16 @@ const handleWin = function() {
   }
 };
 
+/**
+ * If the player takes too long, points will be deducted.
+ * The amount of time after which penalties will be imposed
+ * depends on the round (the further the player has made it the longer
+ * it takes for penalties to start taking effect)
+ */
 const penaltiesForTime = function() {
+  if (player.lives <= 0) {
+    return;
+  }
   const timeDiff = new Date() - timeNewRound;
   if (timeDiff > 4000*factorMin && timeDiff % 600 < 10) {
     $("#points").css({color: '#c0392b'})
@@ -98,6 +154,19 @@ const penaltiesForTime = function() {
   }
 };
 
+/**
+ * Show some text if a player wins or loses points, then fade it out.
+ * @param {points} points Number of points that the player won.
+ * @param {x} x X-value where the text shows up.
+ * @param {y} y Y-value where the text shows up.
+ * @param {r} r R-value of the color of the text.
+ * @param {g} g G-value of the color of the text.
+ * @param {b} b B-value of the color of the text.
+ *
+ * NOTE: The implementation of this method was partially taken over from
+ * the first reply of this thread:
+ * {@link https://stackoverflow.com/questions/9932898/fade-out-effect-for-text-in-html5-canvas}
+ */
 const fadeInPoints = function(points, x, y, r, g, b) {
   let opacity = 1.0;
   let interval = setInterval(function() {
@@ -111,6 +180,12 @@ const fadeInPoints = function(points, x, y, r, g, b) {
   }, 10);
 };
 
+/**
+ * Add gems to the board. If the player picks them up
+ * he wins a bonus in the shape of points or additional
+ * lives. The possibility for gems that win extra lives
+ * is increasing the further the player makes it.
+ */
 const placeGemsRandomly = function() {
   const blueGem = 'images/Gem Blue.png';
   const greenGem = 'images/Gem Green.png';
@@ -133,6 +208,11 @@ const placeGemsRandomly = function() {
   }
 };
 
+/**
+ * Check if the player is about to run into a rock.
+ * @param {x} x X-value of the player.
+ * @param {y} y Y-value of the player.
+ */
 const isThereRock = function(x, y) {
   for (rock of allRocks) {
     if (rock.x === x && rock.y === y) {
@@ -143,6 +223,11 @@ const isThereRock = function(x, y) {
   return false;
 };
 
+/**
+ * Place between one and four enemies randomly
+ * onto the board. Their speed is increasing the further
+ * the player makes it into the game.
+ */
 const placeEnemiesRandomly = function() {
   allEnemies = [];
   const rndNr = randomNumberBetween(1, 100);
@@ -163,6 +248,11 @@ const placeEnemiesRandomly = function() {
   }
 };
 
+/**
+ * Add rocks to the board. If six or more rocks (never more than eight)
+ * are to be placed onto the board, make sure it's always two rocks on top of each other
+ * so there's always a way for the player to make it to the other side.
+ */
 const placeRocksRandomly = function() {
   for (rock of allRocks) {
     rock.x = undefined;
@@ -266,6 +356,9 @@ var Player = function() {
   resetPlayer.call(this);
 };
 
+/**
+* Reset the player to his starting position.
+*/
 Player.prototype.reset = function() {
   timeNewRound = new Date();
   resetPlayer.call(this);
@@ -281,6 +374,11 @@ const drawSprite = function() {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+/**
+* Handling user input.
+* Making sure the player can't move off the board.
+* @param {keyCode} keyCode The user action
+*/
 Player.prototype.handleInput = function(keyCode) {
   let newX, newY;
 
@@ -346,20 +444,24 @@ Player.prototype.handleInput = function(keyCode) {
   }
 };
 
+/**
+* Taking all necessary actions after every move.
+* - Check if the player made it to the other side.
+* - Check if he is taking too long and deduct points if so.
+* - Update UI.
+*/
 Player.prototype.update = function() {
   if (collisionLock) {
     return;
   }
-  handleWin();
+  handleRoundOver();
   updatePts.call(this);
   penaltiesForTime();
 };
 
-const updatePts = function() {
-  const pointsText = $("#points");
-  pointsText.text(Math.round(this.points));
-}
-
+/**
+* Render player, gem and rock objects.
+*/
 Player.prototype.render = function() {
   drawSprite.call(this);
 
