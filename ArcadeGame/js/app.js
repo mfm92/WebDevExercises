@@ -21,9 +21,12 @@ const checkCollisions = function() {
   allEnemies.forEach(function(enemy) {
     if (doCheckCollision(player, enemy)) {
       collisionLock = true;
+      fadeInPoints(":X", player.x, player.y, 204, 0, 0);
       setTimeout(function() {
         player.reset();
-        player.lives--;
+        if (player.lives > 0) {
+          player.lives--;
+        }
         updateLives.call(player);
         handleFail.call(player);
         collisionLock = false;
@@ -33,10 +36,12 @@ const checkCollisions = function() {
   allGems.forEach(function(gem) {
     if (doCheckCollision(player, gem)) {
       player.points += gem.points;
+      fadeInPoints('+' + Math.round(gem.points), player.x, player.y, 0, 204, 102);
 
       if (gem.life) {
         player.lives++;
         updateLives.call(player);
+        fadeInPoints("+1 Life", player.x + WIDTH_OF_CELL, player.y, 0, 153, 153);
       }
 
       gem.x = undefined;
@@ -73,6 +78,7 @@ const handleWin = function() {
   const winHeight = 23;
 
   if (heightPlayer < winHeight) {
+    fadeInPoints('+' + Math.round(pointsBonusSurvival*factorMin*allEnemies.length), player.x, player.y, 0, 204, 0);
     player.reset();
     player.points += (pointsBonusSurvival*factorMin*allEnemies.length);
     factorMin *= 1.14;
@@ -86,9 +92,23 @@ const handleWin = function() {
 
 const penaltiesForTime = function() {
   const timeDiff = new Date() - timeNewRound;
-  if (timeDiff > 3000 && timeDiff % 600 === 0) {
+  if (timeDiff > 4000*factorMin && timeDiff % 600 < 10) {
+    $("#points").css({color: '#c0392b'})
     player.points = Math.max(0, player.points-(7*factorMin));
   }
+};
+
+const fadeInPoints = function(points, x, y, r, g, b) {
+  let opacity = 1.0;
+  let interval = setInterval(function() {
+    ctx.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
+    ctx.font = 'bold 32px Oswald, sans-serif';
+    ctx.fillText(points, x, y + HEIGHT_OF_CELL);
+    opacity -= 0.01;
+    if (opacity === 0) {
+      clearInterval(interval);
+    }
+  }, 10);
 };
 
 const placeGemsRandomly = function() {
@@ -249,6 +269,7 @@ var Player = function() {
 Player.prototype.reset = function() {
   timeNewRound = new Date();
   resetPlayer.call(this);
+  $("#points").css({color: 'black'})
 };
 
 const resetPlayer = function() {
@@ -308,6 +329,7 @@ Player.prototype.handleInput = function(keyCode) {
       newX = this.x;
       if (!isThereRock(newX, newY)) {
         this.points = Math.max(0, this.points-(25*factorMax)); // penalty for moving down!
+        fadeInPoints('-' + Math.round(25*factorMax), newX, newY, 204, 0, 0);
       }
       break;
     }
