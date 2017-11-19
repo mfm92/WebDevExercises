@@ -320,7 +320,7 @@ const getStartXYGem = function() {
   let x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
   let y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
 
-  while (isThereRock(this.x, this.y)) {
+  while (isThereRock(x, y)) {
     x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
     y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
   }
