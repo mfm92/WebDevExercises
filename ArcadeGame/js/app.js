@@ -59,7 +59,7 @@ const checkCollisions = function() {
   allGems.forEach(function(gem) {
     if (doCheckCollision(player, gem)) {
       player.points += gem.points;
-      fadeInPoints('+' + Math.round(gem.points), player.x, player.y, 0, 204, 102);
+      fadeInPoints("+" + Math.round(gem.points), player.x, player.y, 0, 204, 102);
 
       if (gem.life) {
         player.lives++;
@@ -97,7 +97,7 @@ const updateRounds = function() {
 const updatePts = function() {
   const pointsText = $("#points");
   pointsText.text(Math.round(this.points));
-}
+};
 
 /**
  * Display a "Game Over" message to the UI if the player
@@ -109,7 +109,7 @@ const handleFail = function() {
   }
   $("canvas").remove();
   $("#finalText").text("Game over :(");
-  $("#finalText").css({display: 'block'});
+  $("#finalText").css({display: "block"});
 };
 
 /**
@@ -125,7 +125,7 @@ const handleRoundOver = function() {
   const winHeight = 23;
 
   if (heightPlayer < winHeight) {
-    fadeInPoints('+' + Math.round(pointsBonusSurvival*factorMin*allEnemies.length), player.x, player.y, 0, 204, 0);
+    fadeInPoints("+" + Math.round(pointsBonusSurvival*factorMin*allEnemies.length), player.x, player.y, 0, 204, 0);
     player.reset();
     player.points += (pointsBonusSurvival*factorMin*allEnemies.length);
     factorMin *= 1.14;
@@ -149,7 +149,7 @@ const penaltiesForTime = function() {
   }
   const timeDiff = new Date() - timeNewRound;
   if (timeDiff > 4000*factorMin && timeDiff % 600 < 10) {
-    $("#points").css({color: '#c0392b'})
+    $("#points").css({color: "#c0392b"})
     player.points = Math.max(0, player.points-(7*factorMin));
   }
 };
@@ -170,8 +170,8 @@ const penaltiesForTime = function() {
 const fadeInPoints = function(points, x, y, r, g, b) {
   let opacity = 1.0;
   let interval = setInterval(function() {
-    ctx.fillStyle = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity + ')';
-    ctx.font = 'bold 32px Oswald, sans-serif';
+    ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + opacity + ")";
+    ctx.font = "bold 32px Oswald, sans-serif";
     ctx.fillText(points, x, y + HEIGHT_OF_CELL);
     opacity -= 0.01;
     if (opacity === 0) {
@@ -187,10 +187,10 @@ const fadeInPoints = function(points, x, y, r, g, b) {
  * is increasing the further the player makes it.
  */
 const placeGemsRandomly = function() {
-  const blueGem = 'images/Gem Blue.png';
-  const greenGem = 'images/Gem Green.png';
-  const orangeGem = 'images/Gem Orange.png';
-  const lifeGem = 'images/Heart.png';
+  const blueGem = "images/Gem Blue.png";
+  const greenGem = "images/Gem Green.png";
+  const orangeGem = "images/Gem Orange.png";
+  const lifeGem = "images/Heart.png";
 
   allGems = [];
 
@@ -250,8 +250,8 @@ const placeEnemiesRandomly = function() {
 
 /**
  * Add rocks to the board. If six or more rocks (never more than eight)
- * are to be placed onto the board, make sure it's always two rocks on top of each other
- * so there's always a way for the player to make it to the other side.
+ * are to be placed onto the board, make sure it"s always two rocks on top of each other
+ * so there"s always a way for the player to make it to the other side.
  */
 const placeRocksRandomly = function() {
   for (rock of allRocks) {
@@ -309,7 +309,7 @@ var Gem = function(sprite, points, life) {
 };
 
 var Rock = function(x, y) {
-  this.sprite = 'images/Rock.png';
+  this.sprite = "images/Rock.png";
   this.x = x * WIDTH_OF_CELL;
   this.y = y * HEIGHT_OF_CELL;
 }
@@ -317,18 +317,18 @@ var Rock = function(x, y) {
 // Enemies our player must avoid
 var Enemy = function(factor) {
     // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+    // we"ve provided one for you to get started
 
     // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
+    // a helper we"ve provided to easily load images
+    this.sprite = "images/enemy-bug.png";
     this.factor = factor;
 
     this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
     this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
 };
 
-// Update the enemy's position, required method for game
+// Update the enemy"s position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
@@ -349,7 +349,7 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-  this.sprite = 'images/char-boy.png';
+  this.sprite = "images/char-boy.png";
   this.lives = START_LIVES;
   this.points = 0;
 
@@ -362,7 +362,7 @@ var Player = function() {
 Player.prototype.reset = function() {
   timeNewRound = new Date();
   resetPlayer.call(this);
-  $("#points").css({color: 'black'})
+  $("#points").css({color: "black"})
 };
 
 const resetPlayer = function() {
@@ -376,7 +376,7 @@ const drawSprite = function() {
 
 /**
 * Handling user input.
-* Making sure the player can't move off the board.
+* Making sure the player can"t move off the board.
 * @param {keyCode} keyCode The user action
 */
 Player.prototype.handleInput = function(keyCode) {
@@ -387,7 +387,7 @@ Player.prototype.handleInput = function(keyCode) {
   }
 
   switch(keyCode) {
-    case 'left': {
+    case "left": {
       if (this.x - WIDTH_OF_CELL < 0) {
         newX = this.x;
         newY = this.y;
@@ -397,7 +397,7 @@ Player.prototype.handleInput = function(keyCode) {
       newY = this.y;
       break;
     }
-    case 'right': {
+    case "right": {
       if (this.x + WIDTH_OF_CELL >= WIDTH_OF_CELL * CELL_COLUMNS) {
         newX = this.x;
         newY = this.y;
@@ -407,7 +407,7 @@ Player.prototype.handleInput = function(keyCode) {
       newY = this.y;
       break;
     }
-    case 'up': {
+    case "up": {
       if (this.y - HEIGHT_OF_CELL < 0) {
         newX = this.x;
         newY = this.y;
@@ -417,7 +417,7 @@ Player.prototype.handleInput = function(keyCode) {
       newX = this.x;
       break;
     }
-    case 'down': {
+    case "down": {
       if (this.y + HEIGHT_OF_CELL >= HEIGHT_OF_CELL * CELL_ROWS) {
         newX = this.x;
         newY = this.y;
@@ -427,7 +427,7 @@ Player.prototype.handleInput = function(keyCode) {
       newX = this.x;
       if (!isThereRock(newX, newY)) {
         this.points = Math.max(0, this.points-(25*factorMax)); // penalty for moving down!
-        fadeInPoints('-' + Math.round(25*factorMax), newX, newY, 204, 0, 0);
+        fadeInPoints("-" + Math.round(25*factorMax), newX, newY, 204, 0, 0);
       }
       break;
     }
@@ -482,13 +482,13 @@ var player = new Player(),
   allRocks = [];
 
 // This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
+// Player.handleInput() method. You don"t need to modify this.
+document.addEventListener("keyup", function(e) {
     var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
+        37: "left",
+        38: "up",
+        39: "right",
+        40: "down"
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
