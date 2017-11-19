@@ -7,7 +7,7 @@ p {
   font-family: 'Oswald', sans-serif;
 }
 
-#finalText,
-#lifeDown {
+.finalText,
+.lifeDown {
   display: none;
 }

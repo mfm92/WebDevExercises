@@ -1,6 +1,8 @@
 # Starting the game
 You can start the game by pointing the browser of your choice to [this link right here](https://rawgit.com/mfm92/WebDevExercises/master/ArcadeGame/index.html) (might take a while to load all necessary images).
 
+Alternatively you can download the sources for this game from this very repository. You need to point your browser to the file `ArcadeGame/index.html`. Then you can start playing the game by making your first move with the player.
+
 # Rules
 Move your cursor keys to move the player. Watch out that you do not collide with any bug because this will result in the loss of one life. Every player starts out with three lives. The goal is to make it past all bugs to the other side, when a new round will start.
 

@@ -1,3 +1,5 @@
+"use strict;"
+
 const WIDTH_OF_CELL = 101;
 const HEIGHT_OF_CELL = 83;
 const START_LIVES = 3;
@@ -6,8 +8,8 @@ const CELL_COLUMNS = 5;
 
 let collisionLock = false;
 let rounds = 1;
-let factorMin = 1, factorMax = 1;
-const pointsBonusSurvival = 100;
+let speedMin = 100, speedMax = 100;
+const POINTS_BONUS_SURVIVAL = 100;
 let timeNewRound = new Date();
 
 /**
@@ -77,7 +79,7 @@ const checkCollisions = function() {
  * Show the updated number of player lives in the UI.
  */
 const updateLives = function() {
-  const livesText = $("#livesNr");
+  const livesText = $(".livesNr");
   livesText.text(this.lives);
 };
 
@@ -86,7 +88,7 @@ const updateLives = function() {
  * survived in the UI.
  */
 const updateRounds = function() {
-  const roundsText = $("#rounds");
+  const roundsText = $(".rounds");
   roundsText.text(++rounds);
 };
 
@@ -95,7 +97,7 @@ const updateRounds = function() {
  * collected in the UI.
  */
 const updatePts = function() {
-  const pointsText = $("#points");
+  const pointsText = $(".points");
   pointsText.text(Math.round(this.points));
 };
 
@@ -108,8 +110,8 @@ const handleFail = function() {
     return;
   }
   $("canvas").remove();
-  $("#finalText").text("Game over :(");
-  $("#finalText").css({display: "block"});
+  $(".finalText").text("Game over :(");
+  $(".finalText").css({display: "block"});
 };
 
 /**
@@ -125,11 +127,11 @@ const handleRoundOver = function() {
   const winHeight = 23;
 
   if (heightPlayer < winHeight) {
-    fadeInPoints("+" + Math.round(pointsBonusSurvival*factorMin*allEnemies.length), player.x, player.y, 0, 204, 0);
+    fadeInPoints("+" + Math.round(POINTS_BONUS_SURVIVAL*(speedMin/100)*allEnemies.length), player.x, player.y, 0, 204, 0);
     player.reset();
-    player.points += (pointsBonusSurvival*factorMin*allEnemies.length);
-    factorMin *= 1.14;
-    factorMax *= 1.24;
+    player.points += (POINTS_BONUS_SURVIVAL*(speedMin/100)*allEnemies.length);
+    speedMin *= 1.14;
+    speedMax *= 1.24;
     placeRocksRandomly();
     placeGemsRandomly();
     placeEnemiesRandomly();
@@ -148,9 +150,9 @@ const penaltiesForTime = function() {
     return;
   }
   const timeDiff = new Date() - timeNewRound;
-  if (timeDiff > 4000*factorMin && timeDiff % 600 < 10) {
-    $("#points").css({color: "#c0392b"})
-    player.points = Math.max(0, player.points-(7*factorMin));
+  if (timeDiff > 4000*(speedMin/100) && timeDiff % 600 < 10) {
+    $(".points").css({color: "#c0392b"});
+    player.points = Math.max(0, player.points-(7*(speedMin/100)));
   }
 };
 
@@ -195,16 +197,16 @@ const placeGemsRandomly = function() {
   allGems = [];
 
   if (randomNumberBetween(1, 100) < 40) {
-    allGems.push(new Gem(blueGem, 20*factorMin, false));
+    allGems.push(new Gem(blueGem, 20*speedMin/100, false));
   }
   if (randomNumberBetween(1, 100) < 25) {
-    allGems.push(new Gem(greenGem, 50*factorMin, false));
+    allGems.push(new Gem(greenGem, 50*speedMin/100, false));
   }
   if (randomNumberBetween(1, 100) < (5+rounds*2)) {
-    allGems.push(new Gem(lifeGem, 50*factorMin, true));
+    allGems.push(new Gem(lifeGem, 50*speedMin/100, true));
   }
   if (randomNumberBetween(1, 100) < 10) {
-    allGems.push(new Gem(orangeGem, 100*factorMin, false));
+    allGems.push(new Gem(orangeGem, speedMin, false));
   }
 };
 
@@ -214,7 +216,7 @@ const placeGemsRandomly = function() {
  * @param {y} y Y-value of the player.
  */
 const isThereRock = function(x, y) {
-  for (rock of allRocks) {
+  for (let rock of allRocks) {
     if (rock.x === x && rock.y === y) {
       return true;
     }
@@ -244,7 +246,7 @@ const placeEnemiesRandomly = function() {
   }
 
   for (let i = 0; i < pushCount; i++) {
-    allEnemies.push(new Enemy(randomNumberBetween(100*factorMin, 100*factorMax)/100));
+    allEnemies.push(new Enemy(randomNumberBetween(100*speedMin, 100*speedMax)/100));
   }
 };
 
@@ -254,7 +256,7 @@ const placeEnemiesRandomly = function() {
  * so there"s always a way for the player to make it to the other side.
  */
 const placeRocksRandomly = function() {
-  for (rock of allRocks) {
+  for (let rock of allRocks) {
     rock.x = undefined;
     rock.y = undefined;
   }
@@ -294,39 +296,59 @@ const placeRocksRandomly = function() {
   }
 };
 
-var Gem = function(sprite, points, life) {
+var Item = function(x, y, sprite) {
+  this.x = x;
+  this.y = y;
   this.sprite = sprite;
+};
+
+Item.prototype.render = function() {
+  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+var Gem = function(sprite, points, life) {
+  const startCoords = getStartXYGem();
+  Item.call(this, startCoords[0], startCoords[1], sprite);
   this.points = points;
   this.life = life;
+};
 
-  this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
-  this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
+Gem.prototype = Object.create(Item.prototype);
+Gem.prototype.constructor = Gem;
+
+const getStartXYGem = function() {
+  let x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
+  let y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
 
   while (isThereRock(this.x, this.y)) {
-    this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
-    this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
+    x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
+    y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
   }
+
+  return [x, y];
 };
 
 var Rock = function(x, y) {
-  this.sprite = "images/Rock.png";
-  this.x = x * WIDTH_OF_CELL;
-  this.y = y * HEIGHT_OF_CELL;
-}
+  Item.call(this, x * WIDTH_OF_CELL, y * HEIGHT_OF_CELL, "images/Rock.png");
+};
+
+Rock.prototype = Object.create(Item.prototype);
+Rock.prototype.constructor = Rock;
 
 // Enemies our player must avoid
-var Enemy = function(factor) {
+var Enemy = function(speed) {
     // Variables applied to each of our instances go here,
     // we"ve provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we"ve provided to easily load images
-    this.sprite = "images/enemy-bug.png";
-    this.factor = factor;
-
-    this.x = randomNumberBetween(0, 5) * WIDTH_OF_CELL;
-    this.y = randomNumberBetween(1, 4) * HEIGHT_OF_CELL;
+    Item.call(this, randomNumberBetween(0, 5) * WIDTH_OF_CELL,
+      randomNumberBetween(1, 4) * HEIGHT_OF_CELL, "images/enemy-bug.png");
+    this.speed = speed;
 };
+
+Enemy.prototype = Object.create(Item.prototype);
+Enemy.prototype.constructor = Enemy;
 
 // Update the enemy"s position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -337,41 +359,30 @@ Enemy.prototype.update = function(dt) {
     if (collisionLock) {
       return;
     }
-    this.x = (this.x + WIDTH_OF_CELL*(dt*this.factor)) % (WIDTH_OF_CELL * CELL_COLUMNS);
-};
-
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-  drawSprite.call(this);
+    this.x += (dt*this.speed);
+    this.x %= (WIDTH_OF_CELL * CELL_COLUMNS);
 };
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-  this.sprite = "images/char-boy.png";
+  Item.call(this, 2 * WIDTH_OF_CELL, 5 * HEIGHT_OF_CELL, "images/char-boy.png");
   this.lives = START_LIVES;
   this.points = 0;
-
-  resetPlayer.call(this);
 };
+
+Player.prototype = Object.create(Item.prototype);
+Player.prototype.constructor = Player;
 
 /**
 * Reset the player to his starting position.
 */
 Player.prototype.reset = function() {
   timeNewRound = new Date();
-  resetPlayer.call(this);
-  $("#points").css({color: "black"})
-};
-
-const resetPlayer = function() {
   this.x = 2 * WIDTH_OF_CELL;
   this.y = 5 * HEIGHT_OF_CELL;
-};
-
-const drawSprite = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  $(".points").css({color: "black"});
 };
 
 /**
@@ -426,8 +437,8 @@ Player.prototype.handleInput = function(keyCode) {
       newY = this.y + HEIGHT_OF_CELL;
       newX = this.x;
       if (!isThereRock(newX, newY)) {
-        this.points = Math.max(0, this.points-(25*factorMax)); // penalty for moving down!
-        fadeInPoints("-" + Math.round(25*factorMax), newX, newY, 204, 0, 0);
+        this.points = Math.max(0, this.points-(25*speedMax/100)); // penalty for moving down!
+        fadeInPoints("-" + Math.round(25*speedMax/100), newX, newY, 204, 0, 0);
       }
       break;
     }
@@ -435,7 +446,7 @@ Player.prototype.handleInput = function(keyCode) {
       newX = this.x;
       newY = this.y;
       break;
-    };
+    }
   }
 
   if (!isThereRock(newX, newY)) {
@@ -459,25 +470,11 @@ Player.prototype.update = function() {
   penaltiesForTime();
 };
 
-/**
-* Render player, gem and rock objects.
-*/
-Player.prototype.render = function() {
-  drawSprite.call(this);
-
-  for (gem of allGems) {
-    drawSprite.call(gem);
-  }
-  for (rock of allRocks) {
-    drawSprite.call(rock);
-  }
-};
-
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var player = new Player(),
-  allEnemies = [new Enemy(factorMin)],
+  allEnemies = [new Enemy(speedMin)],
   allGems = [],
   allRocks = [];
 
