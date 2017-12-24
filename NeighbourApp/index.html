@@ -1,0 +1,28 @@
+<html>
+
+<head>
+  <title>Simple Map</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <input type="text" data-bind="value: textValue">
+      <input type="submit" data-bind="value: submitValue, click: setMarkers">
+      <ul data-bind="foreach: selectedMarkers">
+        <li data-bind="text: title, click: $parent.showMarker"></li>
+      </ul>
+    </div>
+    <div id="mainMap"></div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyApO-x_ODsqE2knckb0DD77azRTLaVcXPc&callback=initMap" async defer></script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+.container {
+  position: relative;
+  font-family: 'Slabo 27px', serif;
+  height: 100%;
+}
+
+.sidebar {
+  position: absolute;
+  width: 25%;
+  height: 100%;
+  border: 1px solid black;
+}
+
+.sidebar input {
+  position: absolute;
+}
+
+.sidebar input[type="text"] {
+  width: 60%;
+  left: 10%;
+}
+
+#mainMap {
+  position: absolute;
+  width: 73%;
+  left: 26%;
+  height: 100%;
+}
