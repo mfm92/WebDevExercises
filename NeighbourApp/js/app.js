@@ -40,20 +40,137 @@ function retrievePositionDataModel() {
           animation: google.maps.Animation.DROP
         });
         this.markers.push(newMarker);
-
-        var infoWindow = new google.maps.InfoWindow({
-          content: `<p>Title: ${marker.title}, Position: ${marker.position}`
-        });
-
-        newMarker.addListener('click', function() {
-          infoWindow.open(this.mainMap, newMarker);
-        });
+        var infoWindow = new google.maps.InfoWindow();
+        newMarker.addListener('click', () => showWikiInfo(newMarker, infoWindow));
       } else {
         alert(`Location data for ${marker.title} could not be retrieved.`);
       }
     });
   });
 }
+
+function showWikiInfo(marker, infoWindow) {
+  if (marker.wikiText) {
+    infoWindow.setContent(marker.wikiText);
+    infoWindow.open(this.mainMap, marker);
+  } else {
+    $.ajax({
+      format: 'json',
+      url: 'https://de.wikipedia.org/w/api.php?action=query&titles=' + marker.title + '&prop=extracts&format=json&formatversion=2&origin=*',
+      success: function(result) {
+        var wikiText = result.query.pages[0].extract;
+        marker.wikiText = wikiText;
+        infoWindow.setContent(wikiText);
+        infoWindow.open(this.mainMap, marker);
+      }
+    });
+  }
+}
+
+var knockoutModel = {
+  data: [{
+      title: 'Universität Salzburg',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'ARGEkultur Salzburg',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Haus der Natur Salzburg',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Augustinerbräu Mülln',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Zoo Salzburg',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Red Bull Arena (Wals-Siezenheim)',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Europark (Einkaufszentrum)',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Festung Hohensalzburg',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Getreidegasse (Salzburg)',
+      fave: ko.observable(false)
+    },
+    {
+      title: 'Schloss Mirabell',
+      fave: ko.observable(false)
+    }
+  ]
+};
+
+var viewModel = {
+  favoriteText: "Favorite selection...",
+
+  listText: function(item) {
+    return item.title + item.fave;
+  },
+
+  markerData: ko.observableArray(this.knockoutModel.data),
+  selectedMarkers: ko.observableArray(this.knockoutModel.data),
+
+  favoriteSelection: function() {
+    var selection = this.selectedMarkers();
+
+    ko.utils.arrayForEach(this.markerData(), function(marker) {
+      if (selection.includes(marker)) {
+        marker.fave(true);
+      } else {
+        marker.fave(false);
+      }
+    });
+  },
+
+  setMarkers: function() {
+    var textValue = this.textValue();
+    var markerData = this.markerData();
+    var selectedMarkers = [];
+
+    markers.forEach(function(marker) {
+      if (marker.title.toLowerCase().startsWith(textValue.toLowerCase())) {
+        marker.setMap(mainMap);
+        marker.setAnimation(google.maps.Animation.DROP);
+        selectedMarkers.push(markerData.filter(function(markerObj) {
+          return markerObj.title.toLowerCase() == marker.title.toLowerCase();
+        })[0]);
+      } else {
+        marker.setMap(null);
+      }
+    });
+    this.selectedMarkers(selectedMarkers);
+  },
+
+  showMarker: function(item) {
+    markers.forEach(function(marker) {
+      if (marker.title.toLowerCase().startsWith(item.title.toLowerCase())) {
+        marker.setMap(mainMap);
+        marker.setAnimation(google.maps.Animation.DROP);
+        new google.maps.event.trigger(marker, 'click');
+      } else {
+        marker.setMap(null);
+      }
+    });
+  },
+
+  submitValue: "OK",
+  textValue: ko.observable("")
+};
+
+$(function() {
+  ko.applyBindings(viewModel);
+});
 
 var styles = [
   {
@@ -319,75 +436,3 @@ var styles = [
     ]
   }
 ];
-
-var knockoutModel = {
-  data: [{
-      title: 'Universität Salzburg Informatik'
-    },
-    {
-      title: 'Hangar 7 Salzburg'
-    },
-    {
-      title: 'Haus der Natur'
-    },
-    {
-      title: 'Augustinerbräu Mülln'
-    },
-    {
-      title: 'Zoo Hellbrunn'
-    },
-    {
-      title: 'Red Bull Arena salzburg'
-    },
-    {
-      title: 'Europark'
-    },
-    {
-      title: 'Festung Hohensalzburg'
-    },
-    {
-      title: 'Mozart Geburtshaus'
-    },
-    {
-      title: 'Schloss Mirabell'
-    }
-  ]
-};
-
-var viewModel = {
-  markerData: ko.observableArray(this.knockoutModel.data),
-  selectedMarkers: ko.observableArray(this.knockoutModel.data),
-
-  setMarkers: function() {
-    var textValue = this.textValue();
-    var selectedMarkers = [];
-    markers.forEach(function(marker) {
-      if (marker.title.toLowerCase().startsWith(textValue.toLowerCase())) {
-        marker.setMap(mainMap);
-        marker.setAnimation(google.maps.Animation.DROP);
-        selectedMarkers.push(marker);
-      } else {
-        marker.setMap(null);
-      }
-    });
-    this.selectedMarkers(selectedMarkers);
-  },
-
-  showMarker: function(item) {
-    markers.forEach(function(marker) {
-      if (marker.title.toLowerCase().startsWith(item.title.toLowerCase())) {
-        marker.setMap(mainMap);
-        marker.setAnimation(google.maps.Animation.DROP);
-      } else {
-        marker.setMap(null);
-      }
-    });
-  },
-
-  submitValue: "OK",
-  textValue: ko.observable("")
-};
-
-$(function() {
-  ko.applyBindings(viewModel);
-});

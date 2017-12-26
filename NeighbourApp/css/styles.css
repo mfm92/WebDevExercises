@@ -20,6 +20,11 @@
   left: 10%;
 }
 
+.gm-style-iw {
+  max-height: 200px;
+  autoScroll: true;
+}
+
 #mainMap {
   position: absolute;
   width: 73%;
