@@ -1,20 +1,24 @@
+html,body {
+  padding,margin: 0;
+}
+
 .container {
   position: relative;
   font-family: 'Slabo 27px', serif;
-  height: 100%;
+  height: 100vh;
 }
 
 .sidebar {
   position: absolute;
   width: 30%;
-  height: 100%;
+  height: 98%;
   border: 1px solid black;
+  overflow-y: scroll;
 }
 
 .sidebar input {
-  height: 4%;
   position: absolute;
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .sidebar input[type="text"] {
@@ -22,26 +26,29 @@
   left: 10%;
   height: 7%;
   top: 3%;
+  position: absolute;
 }
 
 .sidebar input[type="submit"] {
   height: 8%;
   width: 80%;
   left: 10%;
-  top: 12%;
+  top: 16%;
+  position: absolute;
 }
 
 .sidebar input[type="button"] {
   height: 8%;
   width: 80%;
   left: 10%;
-  top: 16%;
+  top: 22%;
+  position: absolute;
 }
 
 .sidebar ul {
   position: absolute;
   list-style-type: none;
-  top: 20%;
+  top: 28%;
   width: 100%;
   padding: 0;
 }
@@ -58,21 +65,17 @@
 
 #mainMap {
   position: absolute;
-  width: 68%;
+  width: 69%;
   left: 31%;
-  height: 100%;
+  height: 99%;
 }
 
 @media screen and (max-height: 805px) {
-  .sidebar {
-    font-size: 10px;
+  .sidebar ul li {
+    padding: 4% 0% 4% 0%;
   }
 
   .sidebar input {
-    font-size: 10px;
-  }
-
-  .sidebar ul li {
-    padding: 4% 0% 4% 0%;
+    font-size: 20px;
   }
 }

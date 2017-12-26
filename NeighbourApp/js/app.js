@@ -1,6 +1,6 @@
 var initialMapConfig = {
   addressText: "Nawi Salzburg",
-  mapZoom: 13
+  mapZoom: 12
 };
 
 var markers = [];
@@ -29,6 +29,10 @@ function setUpMap() {
   });
 }
 
+/**
+* Loading latLngs for each landmark using Google's Geocoder because
+* I'm too lazy entering these data to the model manually.
+*/
 function retrievePositionDataModel() {
   this.knockoutModel.data.forEach(function(marker) {
     this.geoCoder.geocode({
@@ -58,6 +62,11 @@ function showWikiInfo(marker) {
   var infoWindow = marker.infoWindow;
   var wikiHeader = "<h2><strong>Source: Wikipedia</strong></h2>";
   var timeout = 2500;
+
+  /**
+  * Do not use Wikipedia API more than once for each landmark.
+  * Load wiki text from the model instead.
+  */
   if (marker.wikiText) {
     infoWindow.setContent(marker.wikiText);
     infoWindow.open(this.mainMap, marker);
@@ -65,11 +74,13 @@ function showWikiInfo(marker) {
     $.ajax({
       format: 'json',
       timeout: timeout,
+      /* Retrieving the text of the wikipedia entry for each marker before the first section starts */
+      /* origin=* to avoid cross-origin errors */
       url: 'https://de.wikipedia.org/w/api.php?action=query&titles=' + marker.title + '&prop=extracts&exintro=true&format=json&formatversion=2&origin=*',
       success: function(result) {
-        var wikiText = result.query.pages[0].extract;
+        var wikiText = wikiHeader + result.query.pages[0].extract;
         marker.wikiText = wikiText;
-        infoWindow.setContent(wikiHeader + wikiText);
+        infoWindow.setContent(wikiText);
         infoWindow.open(this.mainMap, marker);
       },
       error: function(jqXHR, statusText, errorThrown) {
