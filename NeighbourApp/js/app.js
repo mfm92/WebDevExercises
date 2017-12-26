@@ -15,13 +15,17 @@ function setUpMap() {
   this.geoCoder = new google.maps.Geocoder();
   this.geoCoder.geocode({
     address: this.initialMapConfig.addressText
-  }, function(success, error) {
-    this.mainMap = new google.maps.Map(document.getElementById('mainMap'), {
-      center: success[0].geometry.location,
-      zoom: this.initialMapConfig.mapZoom,
-      styles: styles,
-      mapTypeId: 'terrain'
-    });
+  }, function(success, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      this.mainMap = new google.maps.Map(document.getElementById('mainMap'), {
+        center: success[0].geometry.location,
+        zoom: this.initialMapConfig.mapZoom,
+        styles: styles,
+        mapTypeId: 'terrain'
+      });
+    } else {
+      document.getElementById('mainMap').innerHTML = 'Google Maps could not be loaded.';
+    }
   });
 }
 
@@ -62,6 +66,10 @@ function showWikiInfo(marker, infoWindow) {
         marker.wikiText = wikiText;
         infoWindow.setContent(wikiText);
         infoWindow.open(this.mainMap, marker);
+      },
+      error: function(jqXHR, statusText, errorThrown) {
+        infoWindow.setContent(`Wikipedia content could not be loaded for ${marker.title}. :(`);
+        infoWindow.open(this.mainMap, marker);
       }
     });
   }
@@ -81,7 +89,7 @@ var knockoutModel = {
       fave: ko.observable(false)
     },
     {
-      title: 'Augustinerbräu Mülln',
+      title: 'Augustiner Bräu Kloster Mülln',
       fave: ko.observable(false)
     },
     {
@@ -113,6 +121,7 @@ var knockoutModel = {
 
 var viewModel = {
   favoriteText: "Favorite selection...",
+  favIcon: " 🌟",
 
   listText: function(item) {
     return item.title + item.fave;

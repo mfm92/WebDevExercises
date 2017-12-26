@@ -20,13 +20,13 @@
   </div>
   <script type="text/html" id="list-item">
     <li>
-      <span data-bind="text: title, click: $parent.showMarker"></span><span data-bind="text: fave() ? ' 🌟' : ''"></span>
+      <span data-bind="text: title, click: $parent.showMarker"></span><span data-bind="text: fave() ? $parent.favIcon : ''"></span>
     </li>
   </script>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
   <script src="js/app.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyApO-x_ODsqE2knckb0DD77azRTLaVcXPc&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyDkoDMvKujqvveSA1bvztzPuiYvuKn7mW0&callback=initMap" async defer></script>
 </body>
 
 </html>
