@@ -6,27 +6,77 @@
 
 .sidebar {
   position: absolute;
-  width: 25%;
+  width: 30%;
   height: 100%;
   border: 1px solid black;
 }
 
 .sidebar input {
+  height: 4%;
   position: absolute;
+  font-size: 20px;
 }
 
 .sidebar input[type="text"] {
-  width: 60%;
+  width: 80%;
   left: 10%;
+  height: 7%;
+  top: 3%;
+}
+
+.sidebar input[type="submit"] {
+  height: 8%;
+  width: 80%;
+  left: 10%;
+  top: 12%;
+}
+
+.sidebar input[type="button"] {
+  height: 8%;
+  width: 80%;
+  left: 10%;
+  top: 16%;
+}
+
+.sidebar ul {
+  position: absolute;
+  list-style-type: none;
+  top: 20%;
+  width: 100%;
+  padding: 0;
+}
+
+.sidebar ul li {
+  text-align: center;
+  padding: 4%;
+  margin: 0;
+}
+
+.sidebar ul li:hover {
+  background-color: #FF7F50;
 }
 
 .gm-style-iw {
-  max-height: 200px;
+  max-height: 300px;
 }
 
 #mainMap {
   position: absolute;
-  width: 73%;
-  left: 26%;
+  width: 68%;
+  left: 31%;
   height: 100%;
+}
+
+@media screen and (max-height: 805px) {
+  .sidebar {
+    font-size: 10px;
+  }
+
+  .sidebar input {
+    font-size: 10px;
+  }
+
+  .sidebar ul li {
+    padding: 4% 0% 4% 0%;
+  }
 }

@@ -120,7 +120,7 @@ var knockoutModel = {
 };
 
 var viewModel = {
-  favoriteText: "Favorite selection...",
+  favoriteText: "Make favorite",
   favIcon: " 🌟",
 
   listText: function(item) {
