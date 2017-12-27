@@ -4,7 +4,6 @@ var initialMapConfig = {
 };
 
 var markers = [];
-var bouncingMarkers = [];
 var mainMap;
 
 function initMap() {
@@ -31,7 +30,6 @@ function setUpMap() {
 }
 
 function handleGoogleMapsFail() {
-  alert("hahaha, nope");
   document.getElementById('mainMap').innerHTML = '<h1>😢</h1><p>Google Maps could not be loaded.</p>';
 }
 
@@ -60,25 +58,17 @@ function retrievePositionDataModel() {
           // All other markers stop bouncing here
           stopBounceAll();
 
-          // Note that marker was clicked
-          bouncingMarkers.push(newMarker);
+          // Close all previously opened info windows
+          closeAllWikiInfo();
 
           // make it bounce
           newMarker.setAnimation(google.maps.Animation.BOUNCE);
           showWikiInfo(newMarker);
         });
+
         google.maps.event.addListener(infoWindow, 'closeclick', function() {
           // everyone stop bouncing
           stopBounceAll();
-
-          // Note that info window for marker was closed
-          // Marker now no longer active
-          bouncingMarkers.splice(bouncingMarkers.indexOf(newMarker), 1);
-
-          // Now the previously clicked marker is active (if it exists), make it bounce!
-          if (bouncingMarkers.length > 0) {
-            bouncingMarkers[bouncingMarkers.length - 1].setAnimation(google.maps.Animation.BOUNCE);
-          }
         });
         newMarker.setVisible(true);
       } else {
@@ -107,20 +97,18 @@ function showWikiInfo(marker) {
       /* Retrieving the text of the wikipedia entry for each marker before the first section starts */
       /* origin=* to avoid cross-origin errors */
       url: 'https://de.wikipedia.org/w/api.php?action=query&titles=' + marker.title + '&prop=extracts&exintro=true&format=json&formatversion=2&origin=*',
-      success: function(result) {
-        var wikiText = wikiHeader + result.query.pages[0].extract;
-        marker.wikiText = wikiText;
-        infoWindow.setContent(wikiText);
-        infoWindow.open(this.mainMap, marker);
-      },
-      error: function(jqXHR, statusText, errorThrown) {
-        if (statusText === 'timeout') {
-          infoWindow.setContent(`Wikipedia content could not be loaded for <b>${marker.title}</b> after ${timeout/1000} seconds. 😫`);
-        } else {
-          infoWindow.setContent(`Wikipedia content could not be loaded for <b>${marker.title}</b>. 😢`);
-        }
-        infoWindow.open(this.mainMap, marker);
+    }).done(function(result) {
+      var wikiText = wikiHeader + result.query.pages[0].extract;
+      marker.wikiText = wikiText;
+      infoWindow.setContent(wikiText);
+      infoWindow.open(this.mainMap, marker);
+    }).fail(function(jqXHR, statusText, errorThrown) {
+      if (statusText === 'timeout') {
+        infoWindow.setContent(`Wikipedia content could not be loaded for <b>${marker.title}</b> after ${timeout/1000} seconds. 😫`);
+      } else {
+        infoWindow.setContent(`Wikipedia content could not be loaded for <b>${marker.title}</b>. 😢`);
       }
+      infoWindow.open(this.mainMap, marker);
     });
   }
 }
@@ -213,7 +201,6 @@ var viewModel = {
     closeAllWikiInfo();
     hideAllMarkers();
     stopBounceAll();
-    bouncingMarkers = [];
 
     var textValue = this.textValue();
     var markerData = this.markerData();
@@ -233,14 +220,6 @@ var viewModel = {
 
   /* Handle event that user clicks on an item in the side bar */
   showMarker: function(item) {
-    /*
-    * Close all opened info windows.
-    * Stop all animations.
-    */
-    closeAllWikiInfo();
-    stopBounceAll();
-    bouncingMarkers = [];
-
     markers.forEach(function(marker) {
       if (marker.title.toLowerCase().startsWith(item.title.toLowerCase())) {
         marker.setAnimation(google.maps.Animation.BOUNCE);

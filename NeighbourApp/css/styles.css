@@ -78,4 +78,8 @@ html,body {
   .sidebar input {
     font-size: 20px;
   }
+
+  .sidebar input[type="button"] {
+    font-size: 15px;
+  }
 }
