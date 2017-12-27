@@ -4,6 +4,8 @@
 
 Open this link [to the hosted version](https://rawgit.com/mfm92/WebDevExercises/master/NeighbourApp/index.html).
 
+Alternatively clone [this GitHub repo](https://github.com/mfm92/WebDevExercises/tree/master/NeighbourApp) (master branch) and point any browser to the `NeighbourApp/index.html` file.
+
 ## About the app / Third-party APIs
 
 * Specify a text in the input element at the top left. Only those POIs where the name starts with the text of the input will be shown, both in the side bar on the left and in the map.

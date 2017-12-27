@@ -4,6 +4,7 @@ var initialMapConfig = {
 };
 
 var markers = [];
+var bouncingMarkers = [];
 var mainMap;
 
 function initMap() {
@@ -24,9 +25,14 @@ function setUpMap() {
         mapTypeId: google.maps.MapTypeId.TERRAIN
       });
     } else {
-      document.getElementById('mainMap').innerHTML = '<h1>😢</h1><p>Google Maps could not be loaded.</p>';
+      handleGoogleMapsFail();
     }
   });
+}
+
+function handleGoogleMapsFail() {
+  alert("hahaha, nope");
+  document.getElementById('mainMap').innerHTML = '<h1>😢</h1><p>Google Maps could not be loaded.</p>';
 }
 
 /**
@@ -50,7 +56,31 @@ function retrievePositionDataModel() {
         this.markers.push(newMarker);
         var infoWindow = new google.maps.InfoWindow();
         newMarker.infoWindow = infoWindow;
-        newMarker.addListener('click', () => showWikiInfo(newMarker));
+        newMarker.addListener('click', () => {
+          // All other markers stop bouncing here
+          stopBounceAll();
+
+          // Note that marker was clicked
+          bouncingMarkers.push(newMarker);
+
+          // make it bounce
+          newMarker.setAnimation(google.maps.Animation.BOUNCE);
+          showWikiInfo(newMarker);
+        });
+        google.maps.event.addListener(infoWindow, 'closeclick', function() {
+          // everyone stop bouncing
+          stopBounceAll();
+
+          // Note that info window for marker was closed
+          // Marker now no longer active
+          bouncingMarkers.splice(bouncingMarkers.indexOf(newMarker), 1);
+
+          // Now the previously clicked marker is active (if it exists), make it bounce!
+          if (bouncingMarkers.length > 0) {
+            bouncingMarkers[bouncingMarkers.length - 1].setAnimation(google.maps.Animation.BOUNCE);
+          }
+        });
+        newMarker.setVisible(true);
       } else {
         alert(`Location data for ${marker.title} could not be retrieved.`);
       }
@@ -98,6 +128,18 @@ function showWikiInfo(marker) {
 function closeAllWikiInfo() {
   markers.forEach(function(marker) {
     marker.infoWindow.close();
+  });
+}
+
+function hideAllMarkers() {
+  markers.forEach(function(marker) {
+    marker.setVisible(false);
+  });
+}
+
+function stopBounceAll() {
+  markers.forEach(function(marker) {
+    marker.setAnimation(null);
   });
 }
 
@@ -162,35 +204,47 @@ var viewModel = {
     });
   },
 
+  /* Handle user specified filter */
   setMarkers: function() {
+    /*
+    * Close all opened info windows.
+    * Hide all markers, stop every animation.
+    */
     closeAllWikiInfo();
+    hideAllMarkers();
+    stopBounceAll();
+    bouncingMarkers = [];
+
     var textValue = this.textValue();
     var markerData = this.markerData();
     var selectedMarkers = [];
 
     markers.forEach(function(marker) {
       if (marker.title.toLowerCase().startsWith(textValue.toLowerCase())) {
-        marker.setMap(mainMap);
+        marker.setVisible(true);
         marker.setAnimation(google.maps.Animation.DROP);
         selectedMarkers.push(markerData.filter(function(markerObj) {
           return markerObj.title.toLowerCase() == marker.title.toLowerCase();
         })[0]);
-      } else {
-        marker.setMap(null);
       }
     });
     this.selectedMarkers(selectedMarkers);
   },
 
+  /* Handle event that user clicks on an item in the side bar */
   showMarker: function(item) {
+    /*
+    * Close all opened info windows.
+    * Stop all animations.
+    */
     closeAllWikiInfo();
+    stopBounceAll();
+    bouncingMarkers = [];
+
     markers.forEach(function(marker) {
       if (marker.title.toLowerCase().startsWith(item.title.toLowerCase())) {
-        marker.setMap(mainMap);
-        marker.setAnimation(google.maps.Animation.DROP);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
         new google.maps.event.trigger(marker, 'click');
-      } else {
-        marker.setMap(null);
       }
     });
   },
